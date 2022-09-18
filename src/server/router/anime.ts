@@ -16,14 +16,18 @@ export const animeRouter = createProtectedRouter()
 
         const list = await ctx.prisma.anime.findMany({
             where: {
-                title: {
-                    contains: input.anime,
-                },
-                OR: {
-                    title_english: {
-                        contains: input.anime,
-                    }
-                }
+                OR: [
+                    {
+                        title: {
+                            contains: input.anime,
+                        },
+                    },
+                    {
+                        title_english: {
+                            contains: input.anime,
+                        },
+                    },
+                ],
             },
             take: input.count ?? 9,
             orderBy: {
