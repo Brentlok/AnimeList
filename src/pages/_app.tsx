@@ -42,5 +42,5 @@ export default withTRPC<AppRouter>({
       transformer: superjson,
     };
   },
-  ssr: true,
+  ssr: false,
 })(MyApp);
