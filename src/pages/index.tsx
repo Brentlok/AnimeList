@@ -1,4 +1,3 @@
-import { signIn, useSession } from "next-auth/react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import ReactPaginate from 'react-paginate';
@@ -7,13 +6,8 @@ import { AnimeList } from "~/components";
 import { hooks, trpc } from "~/utils";
 
 const Home = () => {
-    const { status } = useSession();
     const [page, setPage] = useState(1);
     const [searching, setSearching] = useState(false);
-
-    if (status === 'unauthenticated') {
-        signIn();        
-    }
 
     const [anime, setAnime] = hooks.useParam(
         'anime',

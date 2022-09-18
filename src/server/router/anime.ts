@@ -1,8 +1,8 @@
 import { z } from "zod";
 import { wait } from "~/utils";
-import { createProtectedRouter } from "./protected-router";
+import { createRouter } from "./context";
 
-export const animeRouter = createProtectedRouter()
+export const animeRouter = createRouter()
   .query("byName", {
     input: z
       .object({
