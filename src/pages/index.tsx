@@ -44,7 +44,7 @@ const Home = () => {
 
     return (
         <main className="container mx-auto flex flex-col items-center justify-center min-h-screen p-4 gap-6">
-            <If condition={() => !animeList.data?.length}>
+            <If condition={() => !animeList.data?.result?.length}>
                 <h1 className="text-2xl text-gray-700">
                     AnimeList is an app which allows you to rank your favorite anime!
                 </h1>
@@ -56,7 +56,7 @@ const Home = () => {
             />
             <If condition={() => animeList.isFetched}>
                 <AnimeList
-                    data={animeList.data ?? []}
+                    data={animeList.data?.result ?? []}
                 />
             </If>
         </main>

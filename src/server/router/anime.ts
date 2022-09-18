@@ -7,12 +7,23 @@ export const animeRouter = createProtectedRouter()
     input: z
       .object({
         anime: z.string(),
-        count: z.number().nullish(),
+        paging: z.object({
+            count: z.number(),
+            page: z.number(),
+        }).nullish(),
       }),
     async resolve({ input, ctx }) {
         if(input.anime === '') {
-            return [];
+            return {
+                result: [],
+                paging: {
+                    ...input.paging,
+                    maxPage: 0,
+                }
+            };
         }
+
+        const recordsToSkip = input.paging ? input.paging.count * (input.paging.page + 1) : 0;
 
         const list = await ctx.prisma.anime.findMany({
             where: {
@@ -29,13 +40,39 @@ export const animeRouter = createProtectedRouter()
                     },
                 ],
             },
-            take: input.count ?? 9,
+            skip: recordsToSkip,
+            take: input.paging?.count ?? 9,
             orderBy: {
                 title_english: 'asc',
             }
         });
 
-        return list;
+        const allRecordsCount = await ctx.prisma.anime.count({
+            where: {
+                OR: [
+                    {
+                        title: {
+                            contains: input.anime,
+                        },
+                    },
+                    {
+                        title_english: {
+                            contains: input.anime,
+                        },
+                    },
+                ],
+            },
+        });
+        
+        const maxPage = Math.ceil(allRecordsCount / (input.paging?.count ?? 9));
+
+        return {
+            result: list,
+            paging: {
+                ...input.paging,
+                maxPage,
+            }
+        };
     },
   })
   .mutation('fetchList', {
