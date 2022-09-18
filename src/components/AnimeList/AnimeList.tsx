@@ -13,7 +13,7 @@ export const AnimeList = (props: Props) => {
         
         return (
             <div
-                className="anime cursor-pointer" 
+                className="anime cursor-pointer h-52 w-72 overflow-hidden"
                 key={anime.id}
             >
                 <h1 className="font-medium text-xl text-center">

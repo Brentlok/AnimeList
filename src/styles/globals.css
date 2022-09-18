@@ -6,4 +6,8 @@
     .anime {
         @apply border-2 border-solid border-gray-700 rounded-lg p-2;
     }
+
+    .fetching {
+        height: 75vh;
+    }
 }

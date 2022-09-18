@@ -23,7 +23,7 @@ export const animeRouter = createProtectedRouter()
             };
         }
 
-        const recordsToSkip = input.paging ? input.paging.count * (input.paging.page + 1) : 0;
+        const recordsToSkip = input.paging ? input.paging.count * input.paging.page : 0;
 
         const list = await ctx.prisma.anime.findMany({
             where: {
