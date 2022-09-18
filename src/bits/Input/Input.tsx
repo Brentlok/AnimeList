@@ -8,7 +8,7 @@ type Props = {
 
 export const Input = (props: Props) => (
     <input 
-        className="border-2 border-solid border-gray-700 rounded-lg p-2"
+        className="anime"
         placeholder={props.placeholder}
         value={props.value}
         onChange={e => props.onChange?.(e.target.value)}
