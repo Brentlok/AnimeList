@@ -3,16 +3,35 @@ import { wait } from "~/utils";
 import { createProtectedRouter } from "./protected-router";
 
 export const animeRouter = createProtectedRouter()
-  .query("hello", {
+  .query("byName", {
     input: z
       .object({
-        text: z.string().nullish(),
-      })
-      .nullish(),
-    resolve({ input }) {
-      return {
-        greeting: `Hello ${input?.text ?? "world"}`,
-      };
+        anime: z.string(),
+        count: z.number().nullish(),
+      }),
+    async resolve({ input, ctx }) {
+        if(input.anime === '') {
+            return [];
+        }
+
+        const list = await ctx.prisma.anime.findMany({
+            where: {
+                title: {
+                    contains: input.anime,
+                },
+                OR: {
+                    title_english: {
+                        contains: input.anime,
+                    }
+                }
+            },
+            take: input.count ?? 9,
+            orderBy: {
+                title_english: 'asc',
+            }
+        });
+
+        return list;
     },
   })
   .mutation('fetchList', {
