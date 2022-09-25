@@ -9,7 +9,7 @@ const Home = () => {
     const debouncedAnime = hooks.useDebounce(anime, 300);
 
     useEffect(() => {
-        if(debouncedAnime === '') {
+        if (debouncedAnime === '') {
             return;
         }
 
@@ -21,10 +21,10 @@ const Home = () => {
 
     return (
         <main className="container mx-auto flex flex-col items-center justify-center min-h-screen p-4 gap-6">
-                <h1 className="text-2xl text-gray-700">
-                    AnimeList is an app which allows you to rank your favorite anime!
-                </h1>
-                <Input 
+            <h1 className="text-2xl text-gray-700">
+                AnimeList is an app which allows you to rank your favorite anime!
+            </h1>
+            <Input
                 value={anime}
                 onChange={setAnime}
                 placeholder="Write Anime Name..."

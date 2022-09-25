@@ -4,7 +4,7 @@ type Props = {
 }
 
 export const Button = (props: Props) => (
-    <button 
+    <button
         className="border-2 border-solid border-red-500 rounded-xl p-2 m-2"
         onClick={props.buttonAction}
     >

@@ -7,7 +7,7 @@ export const useParam = (
     param: string,
     pathname: string,
     onEmpty?: (() => void) | string,
-    ) => {
+) => {
     const [value, setValue] = useState('');
     const [mounted, setMounted] = useState(false);
     const debouncedValue = useDebounce(value, 300);
@@ -17,18 +17,18 @@ export const useParam = (
         const paramValue = router.query[param];
         setMounted(true);
 
-        if(paramValue === '') {
+        if (paramValue === '') {
             return;
         }
 
-        if(typeof paramValue === 'string') {
+        if (typeof paramValue === 'string') {
             setValue(paramValue);
         }
 
     }, []);
 
     useEffect(() => {
-        if(!mounted) {
+        if (!mounted) {
             return;
         }
 
@@ -49,9 +49,9 @@ export const useParam = (
         }
 
         router.push({
-                pathname,
-                query: { [param]: debouncedValue },
-            });
+            pathname,
+            query: { [param]: debouncedValue },
+        });
 
     }, [debouncedValue]);
 

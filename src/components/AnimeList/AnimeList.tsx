@@ -6,7 +6,7 @@ type Props = {
 }
 
 export const AnimeList = (props: Props) => {
-    if(!props.data) {
+    if (!props.data) {
         return null;
     }
 
@@ -14,7 +14,7 @@ export const AnimeList = (props: Props) => {
         const TITLE_MAX_LENGTH = 32;
         const title = anime.title === '' ? anime.title_english : anime.title;
         const animeTitle = title.length > TITLE_MAX_LENGTH ? `${title.slice(0, TITLE_MAX_LENGTH)}...` : title;
-        
+
         return (
             <div
                 className="anime cursor-pointer md:h-56 md:w-72 overflow-hidden"
@@ -24,7 +24,7 @@ export const AnimeList = (props: Props) => {
                     {animeTitle}
                 </h1>
                 <div className="relative w-full h-32 mt-4">
-                    <Image 
+                    <Image
                         src={anime.image}
                         alt={anime.title}
                         layout="fill"
