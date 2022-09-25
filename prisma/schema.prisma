@@ -54,7 +54,7 @@ model VerificationToken {
 }
 
 model Anime {
-    id          BigInt    @id
+    id          Int    @id
     title       String
     title_english   String
     image       String  @db.VarChar(255)
