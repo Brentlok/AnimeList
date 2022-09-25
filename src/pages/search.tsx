@@ -29,6 +29,8 @@ const Search = () => {
         setPage(0);
     }, [debouncedAnime]);
 
+    const maxPage = data?.paging.maxPage ?? 0;
+
     return (
         <main className="container mx-auto flex flex-col items-center justify-center min-h-screen p-4 gap-6">
             <Input
@@ -46,9 +48,10 @@ const Search = () => {
                         activeClassName="text-red-500 font-bold"
                         previousLabel=''
                         nextLabel=''
+                        forcePage={page}
                         renderOnZeroPageCount={() => null}
                         onPageChange={e => setPage(e.selected)}
-                        pageCount={data?.paging.maxPage ?? 0}
+                        pageCount={maxPage}
                     />
                 </If>
                 <If condition={() => isLoading}>
