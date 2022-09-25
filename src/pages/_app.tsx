@@ -28,14 +28,9 @@ const MyApp: AppType = ({
   );
 };
 
-const getBaseUrl = () => {
-  if (process.env.VERCEL_URL) return `${process.env.VERCEL_URL}`;
-  return `http://localhost:${process.env.PORT ?? 3000}`;
-};
-
 export default withTRPC<AppRouter>({
   config() {
-    const url = `${getBaseUrl()}/api/trpc`;
+    const url = `${process.env.NEXT_PUBLIC_URL}/api/trpc`;
 
     return {
       url,

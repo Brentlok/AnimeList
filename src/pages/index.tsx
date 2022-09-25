@@ -27,7 +27,6 @@ const Home = () => {
 
     useEffect(() => {
         setPage(0);
-        console.log('t');
     }, [debouncedAnime]);
     
     useEffect(() => {
