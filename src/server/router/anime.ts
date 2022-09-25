@@ -23,7 +23,7 @@ export const animeRouter = createRouter()
         }
 
         const recordsToSkip = input.paging ? input.paging.count * input.paging.page : 0;
-        const count = input.paging?.count ?? 9;
+        const count = input.paging?.count ?? 12;
 
         const list = await ctx.prisma.anime.findMany({
             where: {

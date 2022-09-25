@@ -2,10 +2,14 @@ import { Anime } from "@prisma/client"
 import Image from "next/image";
 
 type Props = {
-    data: Anime[];
+    data?: Anime[];
 }
 
 export const AnimeList = (props: Props) => {
+    if(!props.data) {
+        return null;
+    }
+
     const list = props.data.map(anime => {
         const TITLE_MAX_LENGTH = 32;
         const title = anime.title === '' ? anime.title_english : anime.title;
@@ -13,7 +17,7 @@ export const AnimeList = (props: Props) => {
         
         return (
             <div
-                className="anime cursor-pointer md:h-52 md:w-72 overflow-hidden"
+                className="anime cursor-pointer md:h-56 md:w-72 overflow-hidden"
                 key={anime.id}
             >
                 <h1 className="font-medium text-xl text-center">
@@ -31,9 +35,9 @@ export const AnimeList = (props: Props) => {
         )
     });
 
-    return (
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
+    return props.data.length > 0 ? (
+        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 pb-24">
             {list}
         </div>
-    );
+    ) : <h1 className="text-2xl">No results found...</h1>;
 }
