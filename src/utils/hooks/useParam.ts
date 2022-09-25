@@ -3,7 +3,7 @@ import { useRouter } from "next/router"
 import { useEffect, useState } from "react";
 import { useDebounce } from "./useDebounce";
 
-export const useParam = (param: string, onEmpty?: () => void) => {
+export const useParam = (param: string, pathname: string, onEmpty?: () => void) => {
     const [value, setValue] = useState('');
     const debouncedValue = useDebounce(value, 300);
     const router = useRouter();
@@ -12,7 +12,7 @@ export const useParam = (param: string, onEmpty?: () => void) => {
         const paramValue = router.query[param];
 
         if(paramValue === '') {
-            router.push('');
+            return;
         }
 
         if(typeof paramValue === 'string') {
@@ -23,7 +23,6 @@ export const useParam = (param: string, onEmpty?: () => void) => {
 
     useEffect(() => {
         if(debouncedValue === '') {
-            router.push('');
             onEmpty?.();
             return;
         }
@@ -33,7 +32,7 @@ export const useParam = (param: string, onEmpty?: () => void) => {
         }
 
         router.push({
-                pathname: '/',
+                pathname,
                 query: { [param]: debouncedValue },
             });
 
