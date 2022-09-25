@@ -6,10 +6,10 @@ import { AnimeList } from "~/components";
 import { hooks, trpc } from "~/utils";
 
 const Home = () => {
-    const [page, setPage] = useState(1);
+    const [page, setPage] = useState(0);
     const [searching, setSearching] = useState(false);
 
-    const [anime, setAnime] = hooks.useParam(
+    const [anime, debouncedAnime, setAnime] = hooks.useParam(
         'anime',
         () => setSearching(false),
     );
@@ -17,13 +17,18 @@ const Home = () => {
     const { data, isLoading } = trpc.useQuery([
         "anime.byName",
         { 
-            anime,
+            anime: debouncedAnime,
             paging: {
                 count: 9,
                 page,
             },
         },
     ]);
+
+    useEffect(() => {
+        setPage(0);
+        console.log('t');
+    }, [debouncedAnime]);
     
     useEffect(() => {
         if(data?.result.length && data.result.length > 0) {

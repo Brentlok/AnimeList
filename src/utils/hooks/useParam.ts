@@ -39,5 +39,5 @@ export const useParam = (param: string, onEmpty?: () => void) => {
 
     }, [debouncedValue]);
 
-    return [value, setValue] as const;
+    return [value, debouncedValue, setValue] as const;
 }

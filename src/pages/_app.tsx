@@ -28,16 +28,10 @@ const MyApp: AppType = ({
   );
 };
 
-const getBaseUrlt = () => {
+const getBaseUrl = () => {
   if (process.env.VERCEL_URL) return `${process.env.VERCEL_URL}`;
   return `http://localhost:${process.env.PORT ?? 3000}`;
 };
-
-const getBaseUrl = () => {
-    const t = getBaseUrlt();
-    console.log(t);
-    return t;
-}
 
 export default withTRPC<AppRouter>({
   config() {

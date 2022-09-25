@@ -23,6 +23,7 @@ export const animeRouter = createRouter()
         }
 
         const recordsToSkip = input.paging ? input.paging.count * input.paging.page : 0;
+        const count = input.paging?.count ?? 9;
 
         const list = await ctx.prisma.anime.findMany({
             where: {
@@ -40,7 +41,7 @@ export const animeRouter = createRouter()
                 ],
             },
             skip: recordsToSkip,
-            take: input.paging?.count ?? 9,
+            take: count,
             orderBy: {
                 title_english: 'asc',
             }
@@ -63,7 +64,7 @@ export const animeRouter = createRouter()
             },
         });
         
-        const maxPage = Math.ceil(allRecordsCount / (input.paging?.count ?? 9));
+        const maxPage = Math.ceil(allRecordsCount / count);
 
         return {
             result: list,
