@@ -13,7 +13,7 @@ export const AnimeList = (props: Props) => {
         
         return (
             <div
-                className="anime cursor-pointer h-52 w-72 overflow-hidden"
+                className="anime cursor-pointer md:h-52 md:w-72 overflow-hidden"
                 key={anime.id}
             >
                 <h1 className="font-medium text-xl text-center">
@@ -32,7 +32,7 @@ export const AnimeList = (props: Props) => {
     });
 
     return (
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
             {list}
         </div>
     );
