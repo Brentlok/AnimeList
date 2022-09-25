@@ -11,6 +11,7 @@ const Search = () => {
     const [anime, debouncedAnime, setAnime] = hooks.useParam(
         'anime',
         'search',
+        '/',
     );
 
     const { data, isLoading } = trpc.useQuery([
@@ -18,7 +19,7 @@ const Search = () => {
         { 
             anime: debouncedAnime,
             paging: {
-                count: 9,
+                count: 12,
                 page,
             },
         },
