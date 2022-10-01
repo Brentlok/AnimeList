@@ -74,4 +74,12 @@ export const animeRouter = createRouter()
                 }
             };
         },
+    })
+    .query("byId", {
+        input: z.object({
+            id: z.number(),
+        }),
+        async resolve({ ctx, input }) {
+            return await ctx.prisma.anime.findFirst({ where: { id: { equals: input.id } } });
+        }
     });

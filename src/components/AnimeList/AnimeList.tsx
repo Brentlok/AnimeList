@@ -1,11 +1,14 @@
 import { Anime } from "@prisma/client"
 import Image from "next/image";
+import { useRouter } from "next/router";
 
 type Props = {
     data?: Anime[];
 }
 
 export const AnimeList = (props: Props) => {
+    const router = useRouter();
+
     if (!props.data) {
         return null;
     }
@@ -19,6 +22,7 @@ export const AnimeList = (props: Props) => {
             <div
                 className="anime cursor-pointer md:h-56 md:w-72 overflow-hidden"
                 key={anime.id}
+                onClick={() => router.push(`/anime/${anime.id}`)}
             >
                 <h1 className="font-medium text-xl text-center">
                     {animeTitle}
