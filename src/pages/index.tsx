@@ -20,8 +20,8 @@ const Home = () => {
     }, [debouncedAnime, router]);
 
     return (
-        <main className="container mx-auto flex flex-col items-center justify-center min-h-screen p-4 gap-6">
-            <h1 className="text-2xl text-gray-700">
+        <main className="main p-4">
+            <h1 className="text-2xl text-gray-700 text-center">
                 AnimeList is an app which allows you to rank your favorite anime!
             </h1>
             <Input

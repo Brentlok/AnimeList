@@ -8,11 +8,7 @@ import { hooks, trpc } from "~/utils";
 const Search = () => {
     const [page, setPage] = useState(0);
 
-    const [anime, debouncedAnime, setAnime] = hooks.useParam(
-        'anime',
-        'search',
-        '/',
-    );
+    const [anime, debouncedAnime, setAnime] = hooks.useParam('anime', 'search', '/');
 
     const { data, isLoading } = trpc.useQuery([
         "anime.byName",
@@ -32,7 +28,7 @@ const Search = () => {
     const maxPage = data?.paging.maxPage ?? 0;
 
     return (
-        <main className="container mx-auto flex flex-col items-center justify-center min-h-screen p-4 gap-6">
+        <main className="main p-4">
             <Input
                 value={anime}
                 onChange={setAnime}
