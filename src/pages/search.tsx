@@ -8,15 +8,11 @@ import { hooks, trpc } from "~/utils";
 const Search = () => {
     const [page, setPage] = useState(0);
 
-    const [anime, debouncedAnime, setAnime] = hooks.useParam(
-        'anime',
-        'search',
-        '/',
-    );
+    const [anime, debouncedAnime, setAnime] = hooks.useParam('anime', 'search', '/');
 
     const { data, isLoading } = trpc.useQuery([
         "anime.byName",
-        { 
+        {
             anime: debouncedAnime,
             paging: {
                 count: 12,
@@ -29,37 +25,40 @@ const Search = () => {
         setPage(0);
     }, [debouncedAnime]);
 
+    const maxPage = data?.paging.maxPage ?? 0;
+
     return (
-        <main className="container mx-auto flex flex-col items-center justify-center min-h-screen p-4 gap-6">
-            <Input 
+        <main className="main p-4">
+            <Input
                 value={anime}
                 onChange={setAnime}
                 placeholder="Write Anime Name..."
             />
-                <div className="fetching grid place-items-center gap-4">
-                    <If condition={() => !isLoading}>
-                        <AnimeList
-                            data={data?.result}
-                        />
-                        <ReactPaginate
-                            className="flex fixed bottom-5 anime gap-3 bg-white z-10"
-                            activeClassName="text-red-500 font-bold"
-                            previousLabel=''
-                            nextLabel=''
-                            renderOnZeroPageCount={() => null}
-                            onPageChange={e => setPage(e.selected)}
-                            pageCount={data?.paging.maxPage ?? 0}
-                        />
-                    </If>
-                    <If condition={() => isLoading}>
-                        <Image 
-                            src='/ball-triangle.svg'
-                            alt=""
-                            width={256}
-                            height={256}
-                        />
-                    </If>
-                </div>
+            <div className="fetching grid place-items-center gap-4">
+                <If condition={() => !isLoading}>
+                    <AnimeList
+                        data={data?.result}
+                    />
+                    <ReactPaginate
+                        className="flex fixed bottom-5 anime gap-3 bg-white z-10"
+                        activeClassName="text-red-500 font-bold"
+                        previousLabel=''
+                        nextLabel=''
+                        forcePage={page}
+                        renderOnZeroPageCount={() => null}
+                        onPageChange={e => setPage(e.selected)}
+                        pageCount={maxPage}
+                    />
+                </If>
+                <If condition={() => isLoading}>
+                    <Image
+                        src='/ball-triangle.svg'
+                        alt=""
+                        width={256}
+                        height={256}
+                    />
+                </If>
+            </div>
         </main>
     )
 };

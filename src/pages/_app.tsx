@@ -9,33 +9,33 @@ import { Nav } from "~/components";
 import Head from "next/head";
 
 const MyApp: AppType = ({
-  Component,
-  pageProps: { session, ...pageProps },
+    Component,
+    pageProps: { session, ...pageProps },
 }) => {
-  return (
-      <>
-        <Head>
-            <title>AnimeList</title>
-            <meta name="description" content="AnimeList" />
-            <link rel="icon" href="/favicon.ico" />
-        </Head>
+    return (
+        <>
+            <Head>
+                <title>AnimeList</title>
+                <meta name="description" content="AnimeList" />
+                <link rel="icon" href="/favicon.ico" />
+            </Head>
 
-        <SessionProvider session={session}>
-            <Nav/>
-            <Component {...pageProps} />
-        </SessionProvider>
-      </>
-  );
+            <SessionProvider session={session}>
+                <Nav />
+                <Component {...pageProps} />
+            </SessionProvider>
+        </>
+    );
 };
 
 export default withTRPC<AppRouter>({
-  config() {
-    const url = `${process.env.NEXT_PUBLIC_URL}/api/trpc`;
+    config() {
+        const url = `${process.env.NEXT_PUBLIC_URL}/api/trpc`;
 
-    return {
-      url,
-      transformer: superjson,
-    };
-  },
-  ssr: true,
+        return {
+            url,
+            transformer: superjson,
+        };
+    },
+    ssr: true,
 })(MyApp);

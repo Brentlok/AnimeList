@@ -10,4 +10,8 @@
     .fetching {
         height: 75vh;
     }
+
+    .main {
+        @apply container mx-auto flex flex-col items-center justify-center min-h-screen gap-6;
+    }
 }
