@@ -6,6 +6,6 @@ export default defineNextConfig({
     reactStrictMode: true,
     swcMinify: true,
     images: {
-        domains: ['cdn.myanimelist.net'],
+        domains: ['cdn.myanimelist.net', 'avatars.githubusercontent.com'],
     },
 });

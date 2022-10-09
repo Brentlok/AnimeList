@@ -1,9 +1,13 @@
-import { Anime } from "@prisma/client"
 import Image from "next/image";
 import { useRouter } from "next/router";
 
 type Props = {
-    data?: Anime[];
+    data?: Array<{
+        id: number;
+        title_english: string;
+        title: string;
+        image: string;
+    }>;
 }
 
 export const AnimeList = (props: Props) => {
@@ -35,6 +39,7 @@ export const AnimeList = (props: Props) => {
                         objectFit="contain"
                     />
                 </div>
+                <div className="text-red-500 font-bold">10.0</div>
             </div>
         )
     });

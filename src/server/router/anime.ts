@@ -42,10 +42,24 @@ export const animeRouter = createRouter()
                 },
                 skip: recordsToSkip,
                 take: count,
+                select: {
+                    id: true,
+                    title: true,
+                    title_english: true,
+                    image: true,
+                },
                 orderBy: {
                     title_english: 'asc',
                 }
             });
+
+            const reviews = await ctx.prisma.review.aggregate({
+                _avg: {
+                    review: true,
+                },
+            })
+
+            console.log(reviews);
 
             const allRecordsCount = await ctx.prisma.anime.count({
                 where: {
