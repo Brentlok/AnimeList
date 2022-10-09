@@ -1,9 +1,14 @@
-import { Anime } from "@prisma/client"
 import Image from "next/image";
 import { useRouter } from "next/router";
 
 type Props = {
-    data?: Anime[];
+    data?: Array<{
+        id: number;
+        title_english: string;
+        title: string;
+        image: string;
+        review: number;
+    }>;
 }
 
 export const AnimeList = (props: Props) => {
@@ -17,10 +22,11 @@ export const AnimeList = (props: Props) => {
         const TITLE_MAX_LENGTH = 32;
         const title = anime.title === '' ? anime.title_english : anime.title;
         const animeTitle = title.length > TITLE_MAX_LENGTH ? `${title.slice(0, TITLE_MAX_LENGTH)}...` : title;
+        const review = anime.review === 0 ? '-' : anime.review.toFixed(1);
 
         return (
             <div
-                className="anime cursor-pointer md:h-56 md:w-72 overflow-hidden"
+                className="anime cursor-pointer md:h-56 md:w-72 relative"
                 key={anime.id}
                 onClick={() => router.push(`/anime/${anime.id}`)}
             >
@@ -35,12 +41,15 @@ export const AnimeList = (props: Props) => {
                         objectFit="contain"
                     />
                 </div>
+                <div className="text-red-500 font-bold absolute -top-6 -right-6 z-10 w-12 h-12 rounded-full grid place-items-center bg-white border-2 border-gray-700">
+                    {review}
+                </div>
             </div>
         )
     });
 
     return props.data.length > 0 ? (
-        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 pb-24">
+        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-24">
             {list}
         </div>
     ) : <h1 className="text-2xl">No results found...</h1>;

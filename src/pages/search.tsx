@@ -29,7 +29,8 @@ const Search = () => {
 
     return (
         <main className="main p-4">
-            <Input
+            <Input.Text
+                focusOnStart={true}
                 value={anime}
                 onChange={setAnime}
                 placeholder="Write Anime Name..."

@@ -24,7 +24,7 @@ const Home = () => {
             <h1 className="text-2xl text-gray-700 text-center">
                 AnimeList is an app which allows you to rank your favorite anime!
             </h1>
-            <Input
+            <Input.Text
                 value={anime}
                 onChange={setAnime}
                 placeholder="Write Anime Name..."

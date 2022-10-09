@@ -1,4 +1,7 @@
 {
     "editor.formatOnSave": true,
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "inlineFold.regex": "(className)=(({(`|))|(['\"`]))(.*?)(\\2|(\\4)})",
+    "inlineFold.regexGroup": "6",
+    "inlineFold.supportedLanguages": ["html", "svelte", "typescriptreact"]
 }

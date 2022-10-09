@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { toUndef } from "../api_utils";
 import { createRouter } from "./context";
 
 export const animeRouter = createRouter()
@@ -42,10 +43,36 @@ export const animeRouter = createRouter()
                 },
                 skip: recordsToSkip,
                 take: count,
+                select: {
+                    id: true,
+                    title: true,
+                    title_english: true,
+                    image: true,
+                },
                 orderBy: {
                     title_english: 'asc',
                 }
             });
+
+            const reviews = await Promise.all(list.map(async anime => {
+                const review = await ctx.prisma.review.aggregate({
+                    _avg: {
+                        review: true,
+                    },
+                    where: {
+                        animeId: {
+                            equals: anime.id,
+                        },
+                    },
+                });
+
+                return { animeId: anime.id, review: review._avg.review }
+            }));
+
+            const listWithReviews = list.map(anime => ({
+                ...anime,
+                review: reviews.find(review => review.animeId === anime.id)?.review ?? 0
+            }));
 
             const allRecordsCount = await ctx.prisma.anime.count({
                 where: {
@@ -67,7 +94,7 @@ export const animeRouter = createRouter()
             const maxPage = Math.ceil(allRecordsCount / count);
 
             return {
-                result: list,
+                result: listWithReviews,
                 paging: {
                     ...input.paging,
                     maxPage,
@@ -80,6 +107,33 @@ export const animeRouter = createRouter()
             id: z.number(),
         }),
         async resolve({ ctx, input }) {
-            return await ctx.prisma.anime.findFirst({ where: { id: { equals: input.id } } });
+            const anime = await ctx.prisma.anime.findFirst({ where: { id: { equals: input.id } } });
+
+            const userReview = await ctx.prisma.review.findFirst({
+                where: {
+                    AND: {
+                        userId: { equals: ctx.session?.user?.id },
+                        animeId: { equals: input.id },
+                    }
+                },
+                select: {
+                    id: true,
+                    review: true,
+                    comment: true,
+                },
+            });
+
+            const review = await ctx.prisma.review.aggregate({
+                _avg: {
+                    review: true,
+                },
+                where: {
+                    animeId: {
+                        equals: input.id,
+                    },
+                },
+            });
+
+            return { ...anime, review: review._avg.review, userReview: toUndef(userReview) };
         }
     });
