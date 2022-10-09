@@ -53,13 +53,22 @@ export const animeRouter = createRouter()
                 }
             });
 
-            const reviews = await ctx.prisma.review.aggregate({
-                _avg: {
-                    review: true,
-                },
-            })
+            const reviews = await Promise.all(list.map(async anime => {
+                const review = await ctx.prisma.review.aggregate({
+                    _avg: {
+                        review: true,
+                    },
+                    where: {
+                        animeId: {
+                            equals: anime.id,
+                        },
+                    },
+                });
 
-            console.log(reviews);
+                return { id: anime.id, review: review._avg.review }
+            }));
+
+            const listWithReviews = list.map(anime => ({ ...anime, review: reviews[anime.id]?.review ?? 0 }));
 
             const allRecordsCount = await ctx.prisma.anime.count({
                 where: {
@@ -81,7 +90,7 @@ export const animeRouter = createRouter()
             const maxPage = Math.ceil(allRecordsCount / count);
 
             return {
-                result: list,
+                result: listWithReviews,
                 paging: {
                     ...input.paging,
                     maxPage,
@@ -94,6 +103,19 @@ export const animeRouter = createRouter()
             id: z.number(),
         }),
         async resolve({ ctx, input }) {
-            return await ctx.prisma.anime.findFirst({ where: { id: { equals: input.id } } });
+            const anime = await ctx.prisma.anime.findFirst({ where: { id: { equals: input.id } } });
+
+            const review = await ctx.prisma.review.aggregate({
+                _avg: {
+                    review: true,
+                },
+                where: {
+                    animeId: {
+                        equals: input.id,
+                    },
+                },
+            });
+
+            return { ...anime, review: review._avg.review };
         }
     });

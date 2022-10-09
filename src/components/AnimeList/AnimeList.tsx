@@ -7,6 +7,7 @@ type Props = {
         title_english: string;
         title: string;
         image: string;
+        review: number;
     }>;
 }
 
@@ -21,10 +22,11 @@ export const AnimeList = (props: Props) => {
         const TITLE_MAX_LENGTH = 32;
         const title = anime.title === '' ? anime.title_english : anime.title;
         const animeTitle = title.length > TITLE_MAX_LENGTH ? `${title.slice(0, TITLE_MAX_LENGTH)}...` : title;
+        const review = anime.review === 0 ? '' : anime.review.toFixed(1);
 
         return (
             <div
-                className="anime cursor-pointer md:h-56 md:w-72 overflow-hidden"
+                className="anime cursor-pointer md:h-56 md:w-72 overflow-hidden relative"
                 key={anime.id}
                 onClick={() => router.push(`/anime/${anime.id}`)}
             >
@@ -39,7 +41,7 @@ export const AnimeList = (props: Props) => {
                         objectFit="contain"
                     />
                 </div>
-                <div className="text-red-500 font-bold">10.0</div>
+                <div className="text-red-500 font-bold absolute top-3 right-4">{review}</div>
             </div>
         )
     });
