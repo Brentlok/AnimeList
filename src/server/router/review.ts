@@ -19,4 +19,23 @@ export const reviewRouter = createProtectedRouter()
                 }
             });
         }
-    });
+    })
+    .mutation("modify", {
+        input: z.
+            object({
+                reviewId: z.number(),
+                review: z.number(),
+                comment: z.string(),
+            }),
+        async resolve({ ctx, input }) {
+            await ctx.prisma.review.update({
+                where: {
+                    id: input.reviewId,
+                },
+                data: {
+                    review: input.review,
+                    comment: input.comment,
+                }
+            });
+        }
+    })

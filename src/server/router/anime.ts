@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { toUndef } from "../api_utils";
 import { createRouter } from "./context";
 
 export const animeRouter = createRouter()
@@ -65,10 +66,13 @@ export const animeRouter = createRouter()
                     },
                 });
 
-                return { id: anime.id, review: review._avg.review }
+                return { animeId: anime.id, review: review._avg.review }
             }));
 
-            const listWithReviews = list.map(anime => ({ ...anime, review: reviews[anime.id]?.review ?? 0 }));
+            const listWithReviews = list.map(anime => ({
+                ...anime,
+                review: reviews.find(review => review.animeId === anime.id)?.review ?? 0
+            }));
 
             const allRecordsCount = await ctx.prisma.anime.count({
                 where: {
@@ -105,6 +109,20 @@ export const animeRouter = createRouter()
         async resolve({ ctx, input }) {
             const anime = await ctx.prisma.anime.findFirst({ where: { id: { equals: input.id } } });
 
+            const userReview = await ctx.prisma.review.findFirst({
+                where: {
+                    AND: {
+                        userId: { equals: ctx.session?.user?.id },
+                        animeId: { equals: input.id },
+                    }
+                },
+                select: {
+                    id: true,
+                    review: true,
+                    comment: true,
+                },
+            });
+
             const review = await ctx.prisma.review.aggregate({
                 _avg: {
                     review: true,
@@ -116,6 +134,6 @@ export const animeRouter = createRouter()
                 },
             });
 
-            return { ...anime, review: review._avg.review };
+            return { ...anime, review: review._avg.review, userReview: toUndef(userReview) };
         }
     });
