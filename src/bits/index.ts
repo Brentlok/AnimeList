@@ -1,4 +1,4 @@
 export * from './Button';
 export * from './If';
-export * from './Input';
+export * as Input from './Input';
 export * from './GoBack';

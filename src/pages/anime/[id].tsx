@@ -1,7 +1,8 @@
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { Button, GoBack, If } from "~/bits";
+import { GoBack, If } from "~/bits";
+import { AddReview } from "~/components/AddReview";
 import { trpc } from "~/utils";
 
 const Anime = () => {
@@ -10,14 +11,10 @@ const Anime = () => {
 
     const { data, isLoading, refetch } = trpc.useQuery(['anime.byId', { id }]);
     const { data: session } = useSession();
-    const add = trpc.useMutation(['review.create']);
 
     const title = data?.title ?? data?.title_english;
 
-    const addReview = async () => {
-        await add.mutateAsync({ animeId: id, review: Math.round(Math.random() * 10), comment: '' });
-        refetch();
-    }
+    const review = (Boolean(data?.review) && data?.review !== 0) ? data?.review?.toFixed(1) : '-';
 
     return (
         <main className="main pt-24">
@@ -31,11 +28,11 @@ const Anime = () => {
             </If>
 
             <If condition={() => !isLoading && Boolean(data)}>
-                <h1 className="text-3xl font-semibold flex gap-4">
+                <h1 className="text-3xl font-semibold flex gap-4 items-center">
                     {title}
-                    <If condition={() => Boolean(data?.review)}>
-                        <span className="text-red-500">{data?.review?.toFixed(1)}</span>
-                    </If>
+                    <div className="border-4 border-gray-700 rounded-full w-16 h-16 grid place-items-center">
+                        <span className="text-red-500">{review}</span>
+                    </div>
                 </h1>
                 <div className="flex flex-col gap-4 justify-center md:flex-row w-full mt-6 items-center">
                     <div className="relative w-96 h-96">
@@ -50,9 +47,10 @@ const Anime = () => {
                 </div>
 
                 <If condition={() => Boolean(session?.user)}>
-                    <Button
-                        buttonText="Add review"
-                        buttonAction={addReview}
+                    <AddReview
+                        animeId={id}
+                        userReview={data?.userReview}
+                        refetch={refetch}
                     />
                 </If>
             </If>
