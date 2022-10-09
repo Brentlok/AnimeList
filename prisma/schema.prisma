@@ -43,6 +43,7 @@ model User {
     image         String?
     accounts      Account[]
     sessions      Session[]
+    Review        Review[]
 }
 
 model VerificationToken {
@@ -54,9 +55,20 @@ model VerificationToken {
 }
 
 model Anime {
-    id            Int    @id
+    id            Int      @id
     title         String
     title_english String
-    image         String @db.VarChar(255)
-    description   String @db.Text
+    image         String   @db.VarChar(255)
+    description   String   @db.Text
+    Review        Review[]
+}
+
+model Review {
+    id      Int     @id @default(autoincrement())
+    review  Int
+    comment String?
+    user    User    @relation(fields: [userId], references: [id])
+    userId  String
+    anime   Anime   @relation(fields: [animeId], references: [id])
+    animeId Int
 }
