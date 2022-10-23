@@ -2,6 +2,7 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { GoBack, If } from "~/bits";
+import { Comments } from "~/components";
 import { AddReview } from "~/components/AddReview";
 import { trpc } from "~/utils";
 
@@ -53,6 +54,10 @@ const Anime = () => {
                         refetch={refetch}
                     />
                 </If>
+
+                <Comments
+                    comments={data?.reviews}
+                />
             </If>
 
             <If condition={() => data === null}>

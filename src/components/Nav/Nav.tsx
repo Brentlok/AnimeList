@@ -10,7 +10,7 @@ export const Nav = () => {
         ? (
             <div
                 className='px-4 py-2 flex items-center gap-4 cursor-pointer hover:bg-red-500'
-                onClick={() => confirmPrompt(() => signOut, 'Do you want to log out from the page?')}
+                onClick={() => confirmPrompt(signOut, 'Do you want to log out from the page?')}
             >
                 {session.user.name}
                 <div className='rounded-full'>
