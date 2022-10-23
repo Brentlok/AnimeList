@@ -26,6 +26,7 @@ export const authOptions: NextAuthOptions = {
             clientSecret: env.GOOGLE_CLIENT_SECRET,
         }),
     ],
+    secret: 'secret',
 };
 
 export default NextAuth(authOptions);
