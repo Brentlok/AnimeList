@@ -1,13 +1,17 @@
-import { signIn, useSession } from 'next-auth/react';
+import { signIn, signOut, useSession } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { confirmPrompt } from '~/utils';
 
 export const Nav = () => {
     const { data: session } = useSession();
 
     const rightContent = session?.user
         ? (
-            <div className='p-4 flex items-center gap-4'>
+            <div
+                className='px-4 py-2 flex items-center gap-4 cursor-pointer hover:bg-red-500'
+                onClick={() => confirmPrompt(() => signOut, 'Do you want to log out from the page?')}
+            >
                 {session.user.name}
                 <div className='rounded-full'>
                     <Image
