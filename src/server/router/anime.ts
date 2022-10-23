@@ -123,17 +123,31 @@ export const animeRouter = createRouter()
                 },
             });
 
-            const review = await ctx.prisma.review.aggregate({
-                _avg: {
-                    review: true,
-                },
-                where: {
-                    animeId: {
-                        equals: input.id,
-                    },
-                },
+            const reviews = await ctx.prisma.review.findMany({
+                where: { animeId: { equals: input.id, }, },
             });
 
-            return { ...anime, review: review._avg.review, userReview: toUndef(userReview) };
+            const users = await ctx.prisma.user.findMany({
+                where: { id: { in: reviews.map(x => x.userId) } },
+                select: {
+                    id: true,
+                    image: true,
+                    name: true,
+                }
+            });
+
+            const withUsers = reviews.map(x => ({ ...x, user: users.find(user => user.id === x.userId) }));
+
+            const review = await ctx.prisma.review.aggregate({
+                where: { animeId: { equals: input.id, }, },
+                _avg: { review: true, },
+            });
+
+            return {
+                ...anime,
+                review: review._avg.review,
+                userReview: toUndef(userReview),
+                reviews: withUsers.filter(x => x.userId !== ctx.session?.user?.id),
+            };
         }
     });
