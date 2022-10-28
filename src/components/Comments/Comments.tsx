@@ -17,7 +17,7 @@ type CommentProps = {
 
 const Comment = (props: CommentProps) => (
     <div className="w-full h-32 anime flex">
-        <div className="w-1/3 flex flex-col justify-between items-center h-full">
+        <div className="w-1/2 flex flex-col justify-between items-center h-full">
             <Image
                 className='rounded-full overflow-hidden'
                 src={props.user?.image ?? ''}
@@ -31,7 +31,7 @@ const Comment = (props: CommentProps) => (
                 isBlocked
             />
         </div>
-        <div className="w-2/3 grid place-items-center">
+        <div className="w-1/2 grid place-items-center">
             <span className="tracking-wide">
                 {props.comment}
             </span>
@@ -47,7 +47,7 @@ export const Comments = (props: Props) => {
     const items = props.comments.map(item => <Comment key={item.id} {...item} />)
 
     return (
-        <div className="w-1/2">
+        <div className="w-1/2 grid xl:grid-cols-2 gap-4">
             {items}
         </div>
     )
