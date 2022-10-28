@@ -29,7 +29,7 @@ const Anime = () => {
             </If>
 
             <If condition={() => !isLoading && Boolean(data)}>
-                <h1 className="text-3xl font-semibold flex gap-4 items-center">
+                <h1 className="text-2xl sm:text-3xl font-semibold flex gap-4 items-center">
                     {title}
                     <div className="border-4 border-gray-700 rounded-full w-16 h-16 grid place-items-center">
                         <span className="text-red-500">{review}</span>
@@ -44,7 +44,7 @@ const Anime = () => {
                             objectFit="contain"
                         />
                     </div>
-                    <span className="w-1/2 lg:max-w-xl tracking-wider">{data?.description}</span>
+                    <span className="w-full md:w-1/2 lg:max-w-xl tracking-wider p-5">{data?.description}</span>
                 </div>
 
                 <If condition={() => Boolean(session?.user)}>
