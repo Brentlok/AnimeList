@@ -25,7 +25,7 @@ const Comment = (props: CommentProps) => (
                 width={45}
                 height={45}
             />
-            <h3>{props.user?.name}</h3>
+            <span className="text-xs">{props.user?.name}</span>
             <Input.Stars
                 value={props.review}
                 isBlocked
@@ -47,7 +47,7 @@ export const Comments = (props: Props) => {
     const items = props.comments.map(item => <Comment key={item.id} {...item} />)
 
     return (
-        <div className="w-1/2 grid xl:grid-cols-2 gap-4">
+        <div className="w-full max-w-4xl px-4 grid sm:grid-cols-2 lg:grid-cols-3 gap-4 pb-24">
             {items}
         </div>
     )

@@ -35,7 +35,7 @@ const Search = () => {
                 onChange={setAnime}
                 placeholder="Write Anime Name..."
             />
-            <div className="fetching grid place-items-center gap-4">
+            <div className="fetching grid place-items-center gap-4 mt-4">
                 <If condition={() => !isLoading}>
                     <AnimeList
                         data={data?.result}

@@ -49,9 +49,10 @@ export const animeRouter = createRouter()
                     title_english: true,
                     image: true,
                 },
-                orderBy: {
-                    title_english: 'asc',
-                }
+                orderBy: [
+                    { Review: { _count: 'desc' } },
+                    { title_english: 'asc' },
+                ],
             });
 
             const reviews = await Promise.all(list.map(async anime => {
