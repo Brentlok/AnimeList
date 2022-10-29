@@ -17,17 +17,19 @@ const Anime = () => {
 
     const review = (Boolean(data?.review) && data?.review !== 0) ? data?.review?.toFixed(1) : '-';
 
-    return (
-        <main className="main pt-24">
-            <If condition={() => isLoading}>
-                <Image
-                    src='/ball-triangle.svg'
-                    alt=""
-                    width={256}
-                    height={256}
-                />
-            </If>
+    if (isLoading) {
+        return (
+            <Image
+                src='/ball-triangle.svg'
+                alt=""
+                width={256}
+                height={256}
+            />
+        )
+    }
 
+    return (
+        <>
             <If condition={() => !isLoading && Boolean(data)}>
                 <h1 className="text-2xl sm:text-3xl font-semibold flex gap-4 items-center">
                     {title}
@@ -65,7 +67,7 @@ const Anime = () => {
             </If>
 
             <GoBack />
-        </main>
+        </>
     );
 };
 

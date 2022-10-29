@@ -22,7 +22,9 @@ const MyApp: AppType = ({
 
             <SessionProvider session={session}>
                 <Nav />
-                <Component {...pageProps} />
+                <main className="main py-24 px-4">
+                    <Component {...pageProps} />
+                </main>
             </SessionProvider>
         </>
     );
