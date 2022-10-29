@@ -1,4 +1,4 @@
-import { useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { GoBack, If } from "~/bits";
@@ -10,8 +10,8 @@ const Anime = () => {
     const router = useRouter();
     const id = Number(router.query.id as string);
 
-    const { data, isLoading, refetch } = trpc.useQuery(['anime.byId', { id }]);
     const { data: session } = useSession();
+    const { data, isLoading, refetch } = trpc.useQuery(['anime.byId', { id, userId: session?.user?.id }]);
 
     const title = data?.title ?? data?.title_english;
 
@@ -28,6 +28,22 @@ const Anime = () => {
         )
     }
 
+    const addReview = session?.user
+        ? (
+            <AddReview
+                animeId={id}
+                userReview={data?.userReview}
+                refetch={refetch}
+            />
+        ) : (
+            <div
+                className="anime cursor-pointer"
+                onClick={() => signIn()}
+            >
+                Login to add your review
+            </div>
+        );
+
     return (
         <>
             <If condition={() => !isLoading && Boolean(data)}>
@@ -37,6 +53,7 @@ const Anime = () => {
                         <span className="text-red-500">{review}</span>
                     </div>
                 </h1>
+
                 <div className="flex flex-col gap-4 justify-center md:flex-row w-full mt-6 items-center">
                     <div className="relative w-96 h-96">
                         <Image
@@ -49,13 +66,7 @@ const Anime = () => {
                     <span className="w-full md:w-1/2 lg:max-w-xl tracking-wider p-5">{data?.description}</span>
                 </div>
 
-                <If condition={() => Boolean(session?.user)}>
-                    <AddReview
-                        animeId={id}
-                        userReview={data?.userReview}
-                        refetch={refetch}
-                    />
-                </If>
+                {addReview}
 
                 <Comments
                     comments={data?.reviews}
