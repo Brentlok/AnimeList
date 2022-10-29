@@ -1,16 +1,20 @@
 import { signIn, signOut, useSession } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useState } from 'react';
+import { If } from '~/bits';
 import { confirmPrompt } from '~/utils';
 
 export const Nav = () => {
     const { data: session } = useSession();
+    const [isOpened, setIsOpened] = useState(false);
 
     const rightContent = session?.user
         ? (
             <div
-                className='px-4 py-2 flex items-center gap-4 cursor-pointer hover:bg-red-500'
-                onClick={() => confirmPrompt(signOut, 'Do you want to log out from the page?')}
+                className='px-4 py-2 flex items-center gap-4 cursor-pointer hover:bg-red-500 hover:text-white relative'
+                onMouseEnter={() => setIsOpened(true)}
+                onMouseLeave={() => setIsOpened(false)}
             >
                 {session.user.name}
                 <div className='rounded-full'>
@@ -22,6 +26,24 @@ export const Nav = () => {
                         height={45}
                     />
                 </div>
+                <If condition={() => isOpened}>
+                    <ul className='absolute top-16 p-4 left-0 bg-red-500 text-white w-full flex flex-col gap-2'>
+                        <li className='hover:font-bold'>My account</li>
+                        <If condition={() => Boolean(session?.user?.isAdmin)}>
+                            <li
+                                className='hover:font-bold'
+                            >
+                                Admin panel
+                            </li>
+                        </If>
+                        <li
+                            className='hover:font-bold'
+                            onClick={() => confirmPrompt(signOut)}
+                        >
+                            Sign out
+                        </li>
+                    </ul>
+                </If>
             </div>
         )
         : (

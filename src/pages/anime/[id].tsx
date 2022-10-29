@@ -13,10 +13,6 @@ const Anime = () => {
     const { data: session } = useSession();
     const { data, isLoading, refetch } = trpc.useQuery(['anime.byId', { id, userId: session?.user?.id }]);
 
-    const title = data?.title ?? data?.title_english;
-
-    const review = (Boolean(data?.review) && data?.review !== 0) ? data?.review?.toFixed(1) : '-';
-
     if (isLoading) {
         return (
             <Image
@@ -27,6 +23,9 @@ const Anime = () => {
             />
         )
     }
+
+    const title = data?.title ?? data?.title_english;
+    const review = (Boolean(data?.review) && data?.review !== 0) ? data?.review?.toFixed(1) : '-';
 
     const addReview = session?.user
         ? (
