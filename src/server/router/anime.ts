@@ -106,6 +106,7 @@ export const animeRouter = createRouter()
     .query("byId", {
         input: z.object({
             id: z.number(),
+            userId: z.string().nullish(),
         }),
         async resolve({ ctx, input }) {
             const anime = await ctx.prisma.anime.findFirst({ where: { id: { equals: input.id } } });
@@ -113,12 +114,13 @@ export const animeRouter = createRouter()
             const userReview = await ctx.prisma.review.findFirst({
                 where: {
                     AND: {
-                        userId: { equals: ctx.session?.user?.id },
+                        userId: { equals: input.userId ?? ctx.session?.user?.id },
                         animeId: { equals: input.id },
                     }
                 },
                 select: {
                     id: true,
+                    userId: true,
                     review: true,
                     comment: true,
                 },

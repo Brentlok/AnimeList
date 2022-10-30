@@ -28,7 +28,7 @@ const Search = () => {
     const maxPage = data?.paging.maxPage ?? 0;
 
     return (
-        <main className="main p-4">
+        <>
             <Input.Text
                 focusOnStart={true}
                 value={anime}
@@ -60,7 +60,7 @@ const Search = () => {
                     />
                 </If>
             </div>
-        </main>
+        </>
     )
 };
 

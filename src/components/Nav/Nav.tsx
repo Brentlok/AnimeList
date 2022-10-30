@@ -1,28 +1,53 @@
+import { useAtom } from 'jotai';
 import { signIn, signOut, useSession } from 'next-auth/react';
-import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
+import { profileAtom } from '~/state';
 import { confirmPrompt } from '~/utils';
+import { Profile } from './Profile';
 
 export const Nav = () => {
-    const { data: session } = useSession();
+    const { data: session, status } = useSession();
+    const [profile, setProfile] = useAtom(profileAtom);
+    const router = useRouter();
+    const [isOpened, setIsOpened] = useState(false);
+
+    useEffect(() => {
+        if (!session?.user) {
+            return;
+        }
+
+        const { user } = session;
+
+        setProfile({ isAdmin: user.isAdmin, name: user.name ?? '' });
+    }, [session, setProfile]);
+
+    const list = [
+        {
+            name: 'My Account',
+            action: () => router.push('/profile'),
+        },
+        {
+            forAdmin: true,
+            name: 'Admin Panel',
+            action: () => router.push('/admin'),
+        },
+        {
+            name: 'Sign Out',
+            action: () => confirmPrompt(signOut),
+        }
+    ].filter(item => profile.isAdmin ? true : !item.forAdmin);
 
     const rightContent = session?.user
         ? (
-            <div
-                className='px-4 py-2 flex items-center gap-4 cursor-pointer hover:bg-red-500'
-                onClick={() => confirmPrompt(signOut, 'Do you want to log out from the page?')}
-            >
-                {session.user.name}
-                <div className='rounded-full'>
-                    <Image
-                        className='rounded-full overflow-hidden'
-                        src={session.user.image ?? ''}
-                        alt=''
-                        width={45}
-                        height={45}
-                    />
-                </div>
-            </div>
+            <Profile
+                isOpened={isOpened}
+                setIsOpened={setIsOpened}
+                list={list}
+                avatar={session.user.image}
+                profileName={profile.name}
+            />
         )
         : (
             <div
@@ -40,7 +65,7 @@ export const Nav = () => {
                     Anime<span className="text-red-500">List</span>
                 </h1>
             </Link>
-            {rightContent}
+            {status !== 'loading' && rightContent}
         </nav>
     );
 };
