@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Button, GoBack, Input } from "~/bits";
 import { profileAtom } from "~/state";
-import { trpc } from "~/utils";
+import { preventDefault, trpc } from "~/utils";
 
 const Profile = () => {
     const { data: session } = useSession();
@@ -34,7 +34,7 @@ const Profile = () => {
         }
 
         await changeName.mutateAsync({ name });
-        setProfile({ name });
+        setProfile({ ...profile, name });
     }
 
     return (
@@ -47,11 +47,16 @@ const Profile = () => {
                     width={100}
                     height={100}
                 />
-                <div>
+                <form onSubmit={preventDefault(handleSubmit)}>
                     <h3 className="mb-1">User name</h3>
-                    <Input.Text value={name} onChange={setName} />
-                </div>
+                    <Input.Text
+                        value={name}
+                        onChange={setName}
+                        placeholder='User name...'
+                    />
+                </form>
             </div>
+
             <Button
                 type="submit"
                 buttonText="Submit"

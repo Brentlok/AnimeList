@@ -1,12 +1,11 @@
 import { useAtom } from 'jotai';
 import { signIn, signOut, useSession } from 'next-auth/react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { If } from '~/bits';
 import { profileAtom } from '~/state';
 import { confirmPrompt } from '~/utils';
+import { Profile } from './Profile';
 
 export const Nav = () => {
     const { data: session, status } = useSession();
@@ -19,49 +18,36 @@ export const Nav = () => {
             return;
         }
 
-        setProfile({ name: session.user.name ?? '' });
-    }, [session?.user, setProfile]);
+        const { user } = session;
+
+        setProfile({ isAdmin: user.isAdmin, name: user.name ?? '' });
+    }, [session, setProfile]);
+
+    const list = [
+        {
+            name: 'My Account',
+            action: () => router.push('/profile'),
+        },
+        {
+            forAdmin: true,
+            name: 'Admin Panel',
+            action: () => router.push('/admin'),
+        },
+        {
+            name: 'Sign Out',
+            action: () => confirmPrompt(signOut),
+        }
+    ].filter(item => profile.isAdmin ? true : !item.forAdmin);
 
     const rightContent = session?.user
         ? (
-            <div
-                className='px-4 py-2 flex items-center gap-4 cursor-pointer hover:bg-red-500 hover:text-white relative'
-                onMouseEnter={() => setIsOpened(true)}
-                onMouseLeave={() => setIsOpened(false)}
-            >
-                {profile.name}
-                <div className='rounded-full'>
-                    <Image
-                        className='rounded-full overflow-hidden'
-                        src={session.user.image ?? ''}
-                        alt=''
-                        width={45}
-                        height={45}
-                    />
-                </div>
-                <If condition={() => isOpened}>
-                    <ul className='absolute top-16 p-4 left-0 bg-red-500 text-white w-full flex flex-col gap-2'>
-                        <li
-                            className='hover:font-bold'
-                            onClick={() => router.push('/profile')}
-                        >My account</li>
-                        <If condition={() => Boolean(session?.user?.isAdmin)}>
-                            <li
-                                className='hover:font-bold'
-                                onClick={() => router.push('/admin')}
-                            >
-                                Admin panel
-                            </li>
-                        </If>
-                        <li
-                            className='hover:font-bold'
-                            onClick={() => confirmPrompt(signOut)}
-                        >
-                            Sign out
-                        </li>
-                    </ul>
-                </If>
-            </div>
+            <Profile
+                isOpened={isOpened}
+                setIsOpened={setIsOpened}
+                list={list}
+                avatar={session.user.image}
+                profileName={profile.name}
+            />
         )
         : (
             <div
