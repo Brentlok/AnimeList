@@ -1,13 +1,26 @@
+import { useAtom } from 'jotai';
 import { signIn, signOut, useSession } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 import { If } from '~/bits';
+import { profileAtom } from '~/state';
 import { confirmPrompt } from '~/utils';
 
 export const Nav = () => {
-    const { data: session } = useSession();
+    const { data: session, status } = useSession();
+    const [profile, setProfile] = useAtom(profileAtom);
+    const router = useRouter();
     const [isOpened, setIsOpened] = useState(false);
+
+    useEffect(() => {
+        if (!session?.user) {
+            return;
+        }
+
+        setProfile({ name: session.user.name ?? '' });
+    }, [session?.user, setProfile]);
 
     const rightContent = session?.user
         ? (
@@ -16,7 +29,7 @@ export const Nav = () => {
                 onMouseEnter={() => setIsOpened(true)}
                 onMouseLeave={() => setIsOpened(false)}
             >
-                {session.user.name}
+                {profile.name}
                 <div className='rounded-full'>
                     <Image
                         className='rounded-full overflow-hidden'
@@ -28,10 +41,14 @@ export const Nav = () => {
                 </div>
                 <If condition={() => isOpened}>
                     <ul className='absolute top-16 p-4 left-0 bg-red-500 text-white w-full flex flex-col gap-2'>
-                        <li className='hover:font-bold'>My account</li>
+                        <li
+                            className='hover:font-bold'
+                            onClick={() => router.push('/profile')}
+                        >My account</li>
                         <If condition={() => Boolean(session?.user?.isAdmin)}>
                             <li
                                 className='hover:font-bold'
+                                onClick={() => router.push('/admin')}
                             >
                                 Admin panel
                             </li>
@@ -62,7 +79,7 @@ export const Nav = () => {
                     Anime<span className="text-red-500">List</span>
                 </h1>
             </Link>
-            {rightContent}
+            {status !== 'loading' && rightContent}
         </nav>
     );
 };
