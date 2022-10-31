@@ -5,7 +5,6 @@ import { useDebounce } from "./useDebounce";
 
 export const useParam = (
     param: string,
-    pathname: string,
     onEmpty?: (() => void) | string,
 ) => {
     const [value, setValue] = useState('');
@@ -49,8 +48,8 @@ export const useParam = (
         }
 
         router.push({
-            pathname,
-            query: { [param]: debouncedValue },
+            pathname: router.pathname,
+            query: { ...router.query, [param]: debouncedValue },
         });
 
     }, [debouncedValue]);

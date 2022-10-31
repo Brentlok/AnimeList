@@ -1,12 +1,12 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Input } from "~/bits";
-import { hooks } from "~/utils";
+import { hook } from "~/utils";
 
 const Home = () => {
     const router = useRouter();
     const [anime, setAnime] = useState('');
-    const debouncedAnime = hooks.useDebounce(anime, 300);
+    const debouncedAnime = hook.useDebounce(anime, 300);
 
     useEffect(() => {
         if (debouncedAnime === '') {
@@ -15,7 +15,10 @@ const Home = () => {
 
         router.push({
             pathname: '/search',
-            query: { anime: debouncedAnime },
+            query: {
+                anime: debouncedAnime,
+                page: '1',
+            },
         })
     }, [debouncedAnime, router]);
 

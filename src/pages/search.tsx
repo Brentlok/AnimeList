@@ -1,14 +1,14 @@
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 import ReactPaginate from 'react-paginate';
 import { If, Input } from "~/bits";
 import { AnimeList } from "~/components";
-import { hooks, trpc } from "~/utils";
+import { hook, trpc } from "~/utils";
 
 const Search = () => {
-    const [page, setPage] = useState(0);
-
-    const [anime, debouncedAnime, setAnime] = hooks.useParam('anime', 'search', '/');
+    const isMounted = useRef(false);
+    const [anime, debouncedAnime, setAnime] = hook.useParam('anime', '/');
+    const [page, debouncedPage, setPage] = hook.useParam('page');
 
     const { data, isLoading } = trpc.useQuery([
         "anime.byName",
@@ -16,16 +16,28 @@ const Search = () => {
             anime: debouncedAnime,
             paging: {
                 count: 12,
-                page,
+                page: Number(debouncedPage),
             },
         },
     ]);
 
     useEffect(() => {
-        setPage(0);
-    }, [debouncedAnime]);
+        if (debouncedAnime === '') {
+            return;
+        }
+
+        if (!isMounted.current) {
+            isMounted.current = true;
+            return;
+        }
+
+        setPage('1');
+    }, [debouncedAnime, setPage]);
 
     const maxPage = data?.paging.maxPage ?? 0;
+
+    const forcePageValue = Number(page) - 1;
+    const forcePage = forcePageValue <= maxPage ? forcePageValue : maxPage - 1;
 
     return (
         <>
@@ -45,9 +57,9 @@ const Search = () => {
                         activeClassName="text-red-500 font-bold"
                         previousLabel=''
                         nextLabel=''
-                        forcePage={page}
+                        forcePage={forcePage}
                         renderOnZeroPageCount={() => null}
-                        onPageChange={e => setPage(e.selected)}
+                        onPageChange={e => setPage(String(e.selected + 1))}
                         pageCount={maxPage}
                     />
                 </If>
