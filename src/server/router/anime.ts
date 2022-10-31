@@ -22,6 +22,7 @@ export const animeRouter = createRouter()
                     }
                 };
             }
+            console.log(input.paging?.page);
 
             const recordsToSkip = input.paging ? input.paging.count * input.paging.page : 0;
             const count = input.paging?.count ?? 12;
