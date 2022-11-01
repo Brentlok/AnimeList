@@ -92,7 +92,7 @@ export const animeRouter = createRouter()
                 },
             });
 
-            const maxPage = Math.ceil(allRecordsCount / count);
+            const maxPage = Math.ceil(allRecordsCount / count) - 1;
 
             return {
                 result: listWithReviews,

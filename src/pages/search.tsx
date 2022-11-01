@@ -1,14 +1,23 @@
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 import ReactPaginate from 'react-paginate';
-import { If, Input } from "~/bits";
+import { Input } from "~/bits";
 import { AnimeList } from "~/components";
-import { hooks, trpc } from "~/utils";
+import { hook, trpc } from "~/utils";
 
 const Search = () => {
-    const [page, setPage] = useState(0);
-
-    const [anime, debouncedAnime, setAnime] = hooks.useParam('anime', 'search', '/');
+    const isMounted = useRef(false);
+    const [anime, debouncedAnime, setAnime] = hook.useParam(
+        'anime',
+        '',
+        (p) => String(p),
+        '/',
+    );
+    const [page, debouncedPage, setPage] = hook.useParam(
+        'page',
+        1,
+        (p) => Number(p),
+    );
 
     const { data, isLoading } = trpc.useQuery([
         "anime.byName",
@@ -16,16 +25,45 @@ const Search = () => {
             anime: debouncedAnime,
             paging: {
                 count: 12,
-                page,
+                page: debouncedPage - 1,
             },
         },
     ]);
 
     useEffect(() => {
-        setPage(0);
-    }, [debouncedAnime]);
+        if (debouncedAnime === '') {
+            return;
+        }
+
+        if (!isMounted.current) {
+            isMounted.current = true;
+            return;
+        }
+
+        setPage(1);
+    }, [debouncedAnime, setPage]);
 
     const maxPage = data?.paging.maxPage ?? 0;
+
+    const forcePage = () => {
+        if (!isMounted.current) {
+            return undefined;
+        }
+
+        const forcePageValue = page - 1;
+        return forcePageValue <= maxPage ? forcePageValue : maxPage;
+    }
+
+    if (isLoading) {
+        return (
+            <Image
+                src='/ball-triangle.svg'
+                alt=""
+                width={256}
+                height={256}
+            />
+        );
+    }
 
     return (
         <>
@@ -36,32 +74,22 @@ const Search = () => {
                 placeholder="Write Anime Name..."
             />
             <div className="fetching grid place-items-center gap-4 mt-4">
-                <If condition={() => !isLoading}>
-                    <AnimeList
-                        data={data?.result}
-                    />
-                    <ReactPaginate
-                        className="flex fixed bottom-5 anime gap-3 bg-white z-10"
-                        activeClassName="text-red-500 font-bold"
-                        previousLabel=''
-                        nextLabel=''
-                        forcePage={page}
-                        renderOnZeroPageCount={() => null}
-                        onPageChange={e => setPage(e.selected)}
-                        pageCount={maxPage}
-                    />
-                </If>
-                <If condition={() => isLoading}>
-                    <Image
-                        src='/ball-triangle.svg'
-                        alt=""
-                        width={256}
-                        height={256}
-                    />
-                </If>
+                <AnimeList
+                    data={data?.result}
+                />
+                <ReactPaginate
+                    className="flex fixed bottom-5 anime gap-3 bg-white z-10"
+                    activeClassName="text-red-500 font-bold"
+                    previousLabel=''
+                    nextLabel=''
+                    forcePage={forcePage()}
+                    renderOnZeroPageCount={() => null}
+                    onPageChange={e => setPage(e.selected + 1)}
+                    pageCount={maxPage}
+                />
             </div>
         </>
-    )
+    );
 };
 
 export default Search;
