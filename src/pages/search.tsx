@@ -7,8 +7,17 @@ import { hook, trpc } from "~/utils";
 
 const Search = () => {
     const isMounted = useRef(false);
-    const [anime, debouncedAnime, setAnime] = hook.useParam('anime', '/');
-    const [page, debouncedPage, setPage] = hook.useParam('page');
+    const [anime, debouncedAnime, setAnime] = hook.useParam(
+        'anime',
+        '',
+        (p) => String(p),
+        '/',
+    );
+    const [page, debouncedPage, setPage] = hook.useParam(
+        'page',
+        1,
+        (p) => Number(p),
+    );
 
     const { data, isLoading } = trpc.useQuery([
         "anime.byName",
@@ -16,7 +25,7 @@ const Search = () => {
             anime: debouncedAnime,
             paging: {
                 count: 12,
-                page: Number(debouncedPage) - 1,
+                page: debouncedPage - 1,
             },
         },
     ]);
@@ -31,13 +40,19 @@ const Search = () => {
             return;
         }
 
-        setPage('1');
+        setPage(1);
     }, [debouncedAnime, setPage]);
 
     const maxPage = data?.paging.maxPage ?? 0;
 
-    const forcePageValue = Number(page) - 1;
-    const forcePage = forcePageValue <= maxPage ? forcePageValue : maxPage - 1;
+    const forcePage = () => {
+        if (!isMounted.current) {
+            return undefined;
+        }
+
+        const forcePageValue = page - 1;
+        return forcePageValue <= maxPage ? forcePageValue : maxPage;
+    }
 
     if (isLoading) {
         return (
@@ -47,7 +62,7 @@ const Search = () => {
                 width={256}
                 height={256}
             />
-        )
+        );
     }
 
     return (
@@ -67,14 +82,14 @@ const Search = () => {
                     activeClassName="text-red-500 font-bold"
                     previousLabel=''
                     nextLabel=''
-                    forcePage={forcePage}
+                    forcePage={forcePage()}
                     renderOnZeroPageCount={() => null}
-                    onPageChange={e => setPage(String(e.selected + 1))}
+                    onPageChange={e => setPage(e.selected + 1)}
                     pageCount={maxPage}
                 />
             </div>
         </>
-    )
+    );
 };
 
 export default Search;
