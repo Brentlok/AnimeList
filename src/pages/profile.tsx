@@ -20,11 +20,7 @@ const Profile = () => {
         setName(profile.name);
     }, [profile.name]);
 
-    if (!session) {
-        return null;
-    }
-
-    if (!session.user) {
+    if (!session?.user) {
         return <h1>Login to view your profile</h1>;
     }
 
@@ -42,7 +38,7 @@ const Profile = () => {
             <div className="p-4 flex gap-4 items-center">
                 <Image
                     className='rounded-full overflow-hidden'
-                    src={session.user.image ?? ''}
+                    src={profile.avatar}
                     alt=''
                     width={100}
                     height={100}

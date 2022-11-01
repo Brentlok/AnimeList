@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { profileAtom } from '~/state';
-import { confirmPrompt } from '~/utils';
+import { confirmPrompt, fromExternalImg } from '~/utils';
 import { Profile } from './Profile';
 
 export const Nav = () => {
@@ -20,7 +20,13 @@ export const Nav = () => {
 
         const { user } = session;
 
-        setProfile({ isAdmin: user.isAdmin, name: user.name ?? '' });
+        const avatar = fromExternalImg(user.image);
+
+        setProfile({
+            isAdmin: user.isAdmin,
+            name: user.name ?? '',
+            avatar,
+        });
     }, [session, setProfile]);
 
     const list = [
@@ -45,7 +51,7 @@ export const Nav = () => {
                 isOpened={isOpened}
                 setIsOpened={setIsOpened}
                 list={list}
-                avatar={session.user.image}
+                avatar={profile.avatar}
                 profileName={profile.name}
             />
         )
