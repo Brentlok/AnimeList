@@ -38,4 +38,22 @@ export const reviewRouter = createProtectedRouter()
                 }
             });
         }
+    })
+    .query("list", {
+        async resolve({ ctx }) {
+            const reviews = await ctx.prisma.review.findMany({
+                take: 12,
+            });
+
+            const users = await ctx.prisma.user.findMany({
+                where: { id: { in: reviews.map(x => x.userId) } },
+                select: {
+                    id: true,
+                    image: true,
+                    name: true,
+                }
+            });
+
+            return reviews.map(x => ({ ...x, user: users.find(user => user.id === x.userId) }));
+        },
     });

@@ -1,5 +1,6 @@
 import Image from "next/image"
 import { Input } from "~/bits";
+import { fromExternalImg } from "~/utils";
 
 type Props = {
     comments?: CommentProps[];
@@ -20,7 +21,7 @@ const Comment = (props: CommentProps) => (
         <div className="w-1/2 flex flex-col justify-between items-center h-full">
             <Image
                 className='rounded-full overflow-hidden'
-                src={props.user?.image ?? ''}
+                src={fromExternalImg(props.user?.image)}
                 alt=''
                 width={45}
                 height={45}
