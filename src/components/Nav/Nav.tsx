@@ -1,5 +1,6 @@
 import { useAtom } from 'jotai';
 import { signIn, signOut, useSession } from 'next-auth/react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -62,6 +63,19 @@ export const Nav = () => {
             >
                 <h1>Log in</h1>
             </div>
+        );
+
+    const content = status !== 'loading'
+        ? rightContent
+        : (
+            <div className='px-4'>
+                <Image
+                    src='/ball-triangle.svg'
+                    alt=""
+                    width={45}
+                    height={45}
+                />
+            </div>
         )
 
     return (
@@ -71,7 +85,7 @@ export const Nav = () => {
                     Anime<span className="text-red-500">List</span>
                 </h1>
             </Link>
-            {status !== 'loading' && rightContent}
+            {content}
         </nav>
     );
 };
