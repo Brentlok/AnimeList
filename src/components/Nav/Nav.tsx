@@ -27,6 +27,7 @@ export const Nav = () => {
             isAdmin: user.isAdmin,
             name: user.name ?? '',
             avatar,
+            initialized: true,
         });
     }, [session, setProfile]);
 

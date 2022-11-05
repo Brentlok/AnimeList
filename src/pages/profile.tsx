@@ -7,7 +7,7 @@ import { profileAtom } from "~/state";
 import { preventDefault, trpc } from "~/utils";
 
 const Profile = () => {
-    const { data: session, status } = useSession();
+    const { data: session } = useSession();
     const [profile, setProfile] = useAtom(profileAtom);
     const [name, setName] = useState(profile.name);
     const changeName = trpc.useMutation(['profile.changeName']);
@@ -20,7 +20,7 @@ const Profile = () => {
         setName(profile.name);
     }, [profile.name]);
 
-    if (status === 'loading') {
+    if (!profile.initialized) {
         return (
             <Image
                 src='/ball-triangle.svg'

@@ -7,6 +7,10 @@
         @apply border-2 border-solid border-gray-700 rounded-lg p-2;
     }
 
+    .anime-hover {
+        @apply hover:bg-red-500 hover:text-white transition-all cursor-pointer;
+    }
+
     .fetching {
         height: 75vh;
     }
