@@ -1,7 +1,7 @@
 import { useAtom } from "jotai";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button, GoBack, Input } from "~/bits";
 import { profileAtom } from "~/state";
 import { preventDefault, trpc } from "~/utils";
@@ -12,19 +12,7 @@ const Profile = () => {
     const [name, setName] = useState(profile.name);
     const changeName = trpc.useMutation(['profile.changeName']);
 
-    useEffect(() => {
-        if (profile.name === '') {
-            return;
-        }
-
-        setName(profile.name);
-    }, [profile.name]);
-
-    if (!session) {
-        return null;
-    }
-
-    if (!session.user) {
+    if (!session?.user) {
         return <h1>Login to view your profile</h1>;
     }
 
@@ -42,7 +30,7 @@ const Profile = () => {
             <div className="p-4 flex gap-4 items-center">
                 <Image
                     className='rounded-full overflow-hidden'
-                    src={session.user.image ?? ''}
+                    src={profile.avatar}
                     alt=''
                     width={100}
                     height={100}

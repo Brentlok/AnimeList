@@ -1,10 +1,11 @@
 import { useAtom } from 'jotai';
 import { signIn, signOut, useSession } from 'next-auth/react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { profileAtom } from '~/state';
-import { confirmPrompt } from '~/utils';
+import { confirmPrompt, fromExternalImg } from '~/utils';
 import { Profile } from './Profile';
 
 export const Nav = () => {
@@ -14,13 +15,29 @@ export const Nav = () => {
     const [isOpened, setIsOpened] = useState(false);
 
     useEffect(() => {
+        if (status === 'loading') {
+            return;
+        }
+
         if (!session?.user) {
+            setProfile({
+                ...profile,
+                initialized: true,
+            });
             return;
         }
 
         const { user } = session;
 
-        setProfile({ isAdmin: user.isAdmin, name: user.name ?? '' });
+        const avatar = fromExternalImg(user.image);
+
+        setProfile({
+            isAdmin: user.isAdmin,
+            name: user.name ?? '',
+            avatar,
+            initialized: true,
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [session, setProfile]);
 
     const list = [
@@ -45,7 +62,7 @@ export const Nav = () => {
                 isOpened={isOpened}
                 setIsOpened={setIsOpened}
                 list={list}
-                avatar={session.user.image}
+                avatar={profile.avatar}
                 profileName={profile.name}
             />
         )
@@ -56,6 +73,19 @@ export const Nav = () => {
             >
                 <h1>Log in</h1>
             </div>
+        );
+
+    const content = status !== 'loading'
+        ? rightContent
+        : (
+            <div className='px-4'>
+                <Image
+                    src='/ball-triangle.svg'
+                    alt=""
+                    width={45}
+                    height={45}
+                />
+            </div>
         )
 
     return (
@@ -65,7 +95,7 @@ export const Nav = () => {
                     Anime<span className="text-red-500">List</span>
                 </h1>
             </Link>
-            {status !== 'loading' && rightContent}
+            {content}
         </nav>
     );
 };

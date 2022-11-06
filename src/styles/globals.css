@@ -7,11 +7,36 @@
         @apply border-2 border-solid border-gray-700 rounded-lg p-2;
     }
 
+    .anime-hover {
+        @apply hover:bg-red-500 hover:text-white transition-all cursor-pointer;
+    }
+
     .fetching {
         height: 75vh;
     }
 
     .main {
         @apply container mx-auto flex flex-col items-center justify-center min-h-screen gap-6;
+    }
+
+    .w-double {
+        width: 200%;
+    }
+
+    .close {
+        @apply relative cursor-pointer;
+    }
+
+    .close::after,
+    .close::before {
+        @apply content-[''] w-10 h-2 rounded-full bg-red-500 absolute right-0 top-3;
+    }
+
+    .close::after {
+        @apply rotate-45;
+    }
+
+    .close::before {
+        @apply -rotate-45;
     }
 }

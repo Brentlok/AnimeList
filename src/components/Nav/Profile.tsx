@@ -5,8 +5,8 @@ import { If } from "~/bits";
 type Props = {
     setIsOpened: Dispatch<SetStateAction<boolean>>;
     isOpened: boolean;
-    profileName?: string;
-    avatar?: string | null;
+    profileName: string;
+    avatar: string;
     list: Array<{
         name: string;
         action: () => void;
@@ -34,7 +34,7 @@ export const Profile = (props: Props) => {
             <div className='rounded-full'>
                 <Image
                     className='rounded-full overflow-hidden'
-                    src={props.avatar ?? ''}
+                    src={props.avatar}
                     alt=''
                     width={45}
                     height={45}
