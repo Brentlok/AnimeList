@@ -15,7 +15,15 @@ export const Nav = () => {
     const [isOpened, setIsOpened] = useState(false);
 
     useEffect(() => {
+        if (status === 'loading') {
+            return;
+        }
+
         if (!session?.user) {
+            setProfile({
+                ...profile,
+                initialized: true,
+            });
             return;
         }
 
@@ -29,6 +37,7 @@ export const Nav = () => {
             avatar,
             initialized: true,
         });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [session, setProfile]);
 
     const list = [
