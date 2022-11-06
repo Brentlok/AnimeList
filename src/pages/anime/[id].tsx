@@ -1,9 +1,8 @@
 import { signIn, useSession } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { GoBack, If } from "~/bits";
-import { Comments } from "~/components";
-import { AddReview } from "~/components/AddReview";
+import { GoBack, If, Loading } from "~/bits";
+import { AddReview, Comments } from "~/components";
 import { trpc } from "~/utils";
 
 const Anime = () => {
@@ -14,14 +13,7 @@ const Anime = () => {
     const { data, isLoading, refetch } = trpc.useQuery(['anime.byId', { id, userId: session?.user?.id }]);
 
     if (isLoading) {
-        return (
-            <Image
-                src='/ball-triangle.svg'
-                alt=""
-                width={256}
-                height={256}
-            />
-        )
+        return <Loading />;
     }
 
     const title = data?.title ?? data?.title_english;

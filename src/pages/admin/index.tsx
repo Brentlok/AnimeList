@@ -1,7 +1,6 @@
 import { useAtom } from "jotai";
-import Image from "next/image";
 import { useRouter } from "next/router";
-import { GoBack } from "~/bits";
+import { GoBack, Loading } from "~/bits";
 import { profileAtom } from "~/state";
 import { upperFirst } from "~/utils";
 
@@ -10,14 +9,7 @@ const Admin = () => {
     const [profile] = useAtom(profileAtom);
 
     if (!profile.initialized) {
-        return (
-            <Image
-                src='/ball-triangle.svg'
-                alt=""
-                width={256}
-                height={256}
-            />
-        );
+        return <Loading />;
     }
 
     if (!profile.isAdmin) {

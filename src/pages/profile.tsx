@@ -2,7 +2,7 @@ import { useAtom } from "jotai";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { Button, GoBack, Input } from "~/bits";
+import { Button, GoBack, Input, Loading } from "~/bits";
 import { profileAtom } from "~/state";
 import { preventDefault, trpc } from "~/utils";
 
@@ -21,14 +21,7 @@ const Profile = () => {
     }, [profile.name]);
 
     if (!profile.initialized) {
-        return (
-            <Image
-                src='/ball-triangle.svg'
-                alt=""
-                width={256}
-                height={256}
-            />
-        );
+        return <Loading />;
     }
 
     if (!session?.user) {

@@ -1,7 +1,6 @@
-import Image from "next/image";
 import { useEffect, useRef } from "react";
 import ReactPaginate from 'react-paginate';
-import { Input } from "~/bits";
+import { Input, Loading } from "~/bits";
 import { AnimeList } from "~/components";
 import { hook, trpc } from "~/utils";
 
@@ -55,14 +54,7 @@ const Search = () => {
     }
 
     if (isLoading) {
-        return (
-            <Image
-                src='/ball-triangle.svg'
-                alt=""
-                width={256}
-                height={256}
-            />
-        );
+        return <Loading />;
     }
 
     return (
