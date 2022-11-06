@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { useRouter } from "next/router";
+import { cropString } from "~/utils";
 
 type Props = {
     data?: Array<{
@@ -11,8 +12,6 @@ type Props = {
     }>;
 }
 
-const TITLE_MAX_LENGTH = 32;
-
 export const AnimeList = (props: Props) => {
     const router = useRouter();
 
@@ -22,7 +21,7 @@ export const AnimeList = (props: Props) => {
 
     const list = props.data.map(anime => {
         const title = anime.title === '' ? anime.title_english : anime.title;
-        const animeTitle = title.length > TITLE_MAX_LENGTH ? `${title.slice(0, TITLE_MAX_LENGTH)}...` : title;
+        const animeTitle = cropString(title, 32);
         const review = anime.review === 0 ? '-' : anime.review.toFixed(1);
 
         return (

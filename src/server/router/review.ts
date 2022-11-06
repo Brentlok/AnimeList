@@ -39,14 +39,34 @@ export const reviewRouter = createProtectedRouter()
             });
         }
     })
+    .mutation("remove", {
+        input: z.
+            object({
+                reviewId: z.number(),
+            }),
+        async resolve({ ctx, input }) {
+            await ctx.prisma.review.delete({
+                where: {
+                    id: input.reviewId,
+                },
+            });
+        }
+    })
     .query("list", {
-        async resolve({ ctx }) {
-            const reviews = await ctx.prisma.review.findMany({
-                take: 12,
+        input: z.object({
+            paging: z.object({
+                count: z.number(),
+                page: z.number(),
+            }),
+        }),
+        async resolve({ ctx, input }) {
+            const reviewsBase = await ctx.prisma.review.findMany({
+                take: input.paging.count,
+                skip: input.paging.count * input.paging.page,
             });
 
             const users = await ctx.prisma.user.findMany({
-                where: { id: { in: reviews.map(x => x.userId) } },
+                where: { id: { in: reviewsBase.map(x => x.userId) } },
                 select: {
                     id: true,
                     image: true,
@@ -54,6 +74,32 @@ export const reviewRouter = createProtectedRouter()
                 }
             });
 
-            return reviews.map(x => ({ ...x, user: users.find(user => user.id === x.userId) }));
+            const animeTitles = await ctx.prisma.anime.findMany({
+                where: {
+                    id: { in: reviewsBase.map(x => x.animeId) }
+                },
+                select: {
+                    id: true,
+                    title: true,
+                }
+            });
+
+            const allRecordsCount = await ctx.prisma.review.count({});
+            const maxPage = Math.ceil(allRecordsCount / input.paging.count);
+            const reviews = reviewsBase
+                .map(x => ({ ...x, user: users.find(user => user.id === x.userId) }))
+                .map(x => ({
+                    ...x,
+                    animeTitle: animeTitles
+                        .find(anime => anime.id === x.animeId)?.title ?? '',
+                }));
+
+            return {
+                result: reviews,
+                paging: {
+                    ...input.paging,
+                    maxPage,
+                }
+            }
         },
     });
