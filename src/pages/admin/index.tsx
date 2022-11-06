@@ -1,16 +1,12 @@
 import { useAtom } from "jotai";
 import { useRouter } from "next/router";
-import { GoBack, Loading } from "~/bits";
+import { GoBack } from "~/bits";
 import { profileAtom } from "~/state";
 import { upperFirst } from "~/utils";
 
 const Admin = () => {
     const router = useRouter();
     const [profile] = useAtom(profileAtom);
-
-    if (!profile.initialized) {
-        return <Loading />;
-    }
 
     if (!profile.isAdmin) {
         return <h1 className="text-3xl">You do not have access</h1>;

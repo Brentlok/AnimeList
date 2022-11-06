@@ -1,9 +1,7 @@
-import { useAtom } from "jotai";
 import { useState } from "react";
 import ReactPaginate from "react-paginate";
 import { GoBack, Loading } from "~/bits";
 import { Comments } from "~/components";
-import { profileAtom } from "~/state";
 import { confirmPrompt, trpc } from "~/utils";
 
 const Reviews = () => {
@@ -55,8 +53,4 @@ const Reviews = () => {
     );
 }
 
-export default function R() {
-    const [profile] = useAtom(profileAtom);
-
-    return profile.initialized ? <Reviews /> : <Loading />;
-}
+export default Reviews;

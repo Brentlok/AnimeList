@@ -1,8 +1,8 @@
 import { useAtom } from "jotai";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import { useEffect, useState } from "react";
-import { Button, GoBack, Input, Loading } from "~/bits";
+import { useState } from "react";
+import { Button, GoBack, Input } from "~/bits";
 import { profileAtom } from "~/state";
 import { preventDefault, trpc } from "~/utils";
 
@@ -11,18 +11,6 @@ const Profile = () => {
     const [profile, setProfile] = useAtom(profileAtom);
     const [name, setName] = useState(profile.name);
     const changeName = trpc.useMutation(['profile.changeName']);
-
-    useEffect(() => {
-        if (profile.name === '') {
-            return;
-        }
-
-        setName(profile.name);
-    }, [profile.name]);
-
-    if (!profile.initialized) {
-        return <Loading />;
-    }
 
     if (!session?.user) {
         return <h1>Login to view your profile</h1>;

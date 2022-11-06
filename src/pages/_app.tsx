@@ -7,11 +7,20 @@ import { SessionProvider } from "next-auth/react";
 import "~/styles/globals.css";
 import { Nav } from "~/components";
 import Head from "next/head";
+import { useAtom } from "jotai";
+import { profileAtom } from "~/state";
+import { Loading } from "~/bits";
 
 const MyApp: AppType = ({
     Component,
     pageProps: { session, ...pageProps },
 }) => {
+    const [profile] = useAtom(profileAtom);
+
+    const content = profile.initialized
+        ? <Component {...pageProps} />
+        : <Loading />;
+
     return (
         <>
             <Head>
@@ -23,7 +32,7 @@ const MyApp: AppType = ({
             <SessionProvider session={session}>
                 <Nav />
                 <main className="main py-24 px-4">
-                    <Component {...pageProps} />
+                    {content}
                 </main>
             </SessionProvider>
         </>
