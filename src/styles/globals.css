@@ -24,7 +24,7 @@
     }
 
     .close {
-        @apply relative cursor-pointer;
+        @apply relative cursor-pointer z-10;
     }
 
     .close::after,
