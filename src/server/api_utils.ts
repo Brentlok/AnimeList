@@ -1,4 +1,4 @@
-import FormData from 'form-data';
+import { FormData } from "formdata-node"
 
 export const toUndef = <T>(value: T | null) => {
     return value === null ? undefined : value;
