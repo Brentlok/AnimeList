@@ -4,32 +4,47 @@ import Image from "next/image";
 import { useState } from "react";
 import { Button, GoBack, Input } from "~/bits";
 import { profileAtom } from "~/state";
-import { preventDefault, trpc } from "~/utils";
+import { blobToBase64, preventDefault, trpc } from "~/utils";
 
 const Profile = () => {
     const { status } = useSession();
     const [profile, setProfile] = useAtom(profileAtom);
     const [avatar, setAvatar] = useState(profile.avatar);
+    const [file, setFile] = useState<File>();
     const [name, setName] = useState(profile.name);
-    const changeName = trpc.useMutation(['profile.changeName']);
+    const updateProfile = trpc.useMutation(['profile.updateProfile']);
 
     if (status === 'unauthenticated') {
         return <h1>Login to view your profile</h1>;
     }
 
     const handleSubmit = async () => {
-        if (profile.name === name) {
-            return;
+        let base64 = '';
+
+        if (file) {
+            base64 = await blobToBase64(file) ?? '';
         }
 
-        await changeName.mutateAsync({ name });
-        setProfile({ ...profile, name });
+        await updateProfile.mutateAsync({ name, avatarData: base64 });
+        const newProfile = {
+            ...profile,
+            name,
+        }
+
+        if (base64) {
+            newProfile.avatar = avatar;
+        }
+
+        setProfile(newProfile);
     }
 
     const img = avatar === ''
         ? (
             <div className="w-24 h-24">
-                <Input.File setDataUrl={setAvatar} />
+                <Input.File
+                    setFile={setFile}
+                    setDataUrl={setAvatar}
+                />
             </div>
         )
         : (
@@ -68,7 +83,7 @@ const Profile = () => {
                 type="submit"
                 buttonText="Submit"
                 buttonAction={handleSubmit}
-                isLoading={changeName.isLoading}
+                isLoading={updateProfile.isLoading}
             />
 
             <GoBack />

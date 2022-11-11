@@ -2,6 +2,7 @@ import { Dispatch, SetStateAction } from "react";
 
 type Props = {
     setDataUrl: Dispatch<SetStateAction<string>>;
+    setFile: Dispatch<SetStateAction<File | undefined>>;
 }
 
 export const File = (props: Props) => {
@@ -16,6 +17,7 @@ export const File = (props: Props) => {
             return;
         }
 
+        props.setFile(item);
         props.setDataUrl(URL.createObjectURL(item));
     }
 
