@@ -10,7 +10,7 @@ export default defineNextConfig({
             'cdn.myanimelist.net',
             'avatars.githubusercontent.com',
             'lh3.googleusercontent.com',
-            '54.37.138.225',
+            'db.hbieszczad.pl',
         ],
     },
 });

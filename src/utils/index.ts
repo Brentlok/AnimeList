@@ -6,4 +6,4 @@ export * from './preventDefault';
 export * from './fromExternalImg';
 export * from './upperFirst';
 export * from './cropString';
-export * from './blobToBase64';
+export * from './pocketBase';
