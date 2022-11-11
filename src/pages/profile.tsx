@@ -4,10 +4,10 @@ import Image from "next/image";
 import { useState } from "react";
 import { Button, GoBack, Input } from "~/bits";
 import { profileAtom } from "~/state";
-import { blobToBase64, preventDefault, trpc } from "~/utils";
+import { pocketBase, preventDefault, trpc } from "~/utils";
 
 const Profile = () => {
-    const { status } = useSession();
+    const { data, status } = useSession();
     const [profile, setProfile] = useAtom(profileAtom);
     const [avatar, setAvatar] = useState(profile.avatar);
     const [file, setFile] = useState<File>();
@@ -19,23 +19,11 @@ const Profile = () => {
     }
 
     const handleSubmit = async () => {
-        let base64 = '';
-
-        if (file) {
-            base64 = await blobToBase64(file) ?? '';
-        }
-
-        await updateProfile.mutateAsync({ name, avatarData: base64 });
-        const newProfile = {
-            ...profile,
-            name,
-        }
-
-        if (base64) {
-            newProfile.avatar = avatar;
-        }
-
-        setProfile(newProfile);
+        const path = file
+            ? await pocketBase.addFile(file, data?.user?.image)
+            : '';
+        await updateProfile.mutateAsync({ name, avatar: path });
+        setProfile({ ...profile, name, avatar });
     }
 
     const img = avatar === ''
