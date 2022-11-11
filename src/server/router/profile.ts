@@ -13,19 +13,19 @@ export const profileRouter = createProtectedRouter()
                 avatarData: z.string(),
             }),
         async resolve({ ctx, input }) {
-            let path = '';
+            const path = '';
             if (input.avatarData !== '') {
                 const oldImage = ctx.session.user.image ?? '';
 
                 // Test if oldImage comes from file server
-                if (!/https:\/\//.test(oldImage)) {
-                    const oldFileId = oldImage.split('/').find(() => true) ?? '';
-                    await client.records.delete('files', oldFileId);
-                }
+                // if (!/https:\/\//.test(oldImage)) {
+                //     const oldFileId = oldImage.split('/').find(() => true) ?? '';
+                //     await client.records.delete('files', oldFileId);
+                // }
 
                 const form = await base64ToForm(input.avatarData);
-                const created = await client.records.create('files', form);
-                path = `${created.id}/${created.file}`;
+                // const created = await client.records.create('files', form);
+                // path = `${created.id}/${created.file}`;
             }
 
             await ctx.prisma.user.update({

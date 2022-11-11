@@ -3,6 +3,7 @@ import { Dispatch, SetStateAction } from "react";
 type Props = {
     setDataUrl: Dispatch<SetStateAction<string>>;
     setFile: Dispatch<SetStateAction<File | undefined>>;
+    accept?: string;
 }
 
 export const File = (props: Props) => {
@@ -32,6 +33,7 @@ export const File = (props: Props) => {
             <input
                 type="file"
                 id="upload"
+                accept={props.accept ?? 'image/*'}
                 className="hidden"
                 onChange={e => getFile(e.target.files)} />
         </div>
