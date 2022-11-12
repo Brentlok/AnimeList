@@ -18,6 +18,7 @@ const protectedRouter = createProtectedRouter()
                     title_english: input.title_english,
                     description: input.description,
                     image: input.image,
+                    waitingForApproval: true,
                 }
             });
 
@@ -51,18 +52,23 @@ export const animeRouter = createRouter()
 
             const list = await ctx.prisma.anime.findMany({
                 where: {
-                    OR: [
-                        {
-                            title: {
-                                contains: input.anime,
-                            },
+                    AND: {
+                        waitingForApproval: {
+                            not: !ctx.session?.user?.isAdmin,
                         },
-                        {
-                            title_english: {
-                                contains: input.anime,
+                        OR: [
+                            {
+                                title: {
+                                    contains: input.anime,
+                                },
                             },
-                        },
-                    ],
+                            {
+                                title_english: {
+                                    contains: input.anime,
+                                },
+                            },
+                        ],
+                    }
                 },
                 skip: recordsToSkip,
                 take: count,
