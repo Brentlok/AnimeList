@@ -1,3 +1,4 @@
+import { GoBack } from "~/bits";
 import { AnimeForm, FormDataType } from "~/components"
 import { pocketBase, trpc } from "~/utils";
 
@@ -18,6 +19,7 @@ const Add = () => {
         <>
             <h1 className="text-3xl font-semibold text-gray-700">Add new Anime</h1>
             <AnimeForm onSubmit={onSubmit} isLoading={addAnime.isLoading} />
+            <GoBack />
         </>
     );
 }

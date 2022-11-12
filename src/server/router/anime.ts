@@ -18,12 +18,44 @@ const protectedRouter = createProtectedRouter()
                     title_english: input.title_english,
                     description: input.description,
                     image: input.image,
-                    waitingForApproval: true,
+                    waitingForApproval: !ctx.session.user.isAdmin,
                 }
             });
 
             return res.id;
         },
+    })
+    .query('waitingForApproval', {
+        async resolve({ ctx }) {
+            if (!ctx.session.user.isAdmin) {
+                return [];
+            }
+
+            return await ctx.prisma.anime.findMany({
+                where: {
+                    waitingForApproval: {
+                        equals: true,
+                    }
+                }
+            })
+        }
+    })
+    .mutation('accept', {
+        input: z.number(),
+        async resolve({ ctx, input }) {
+            if (!ctx.session.user.isAdmin) {
+                return;
+            }
+
+            await ctx.prisma.anime.update({
+                data: {
+                    waitingForApproval: false,
+                },
+                where: {
+                    id: input,
+                }
+            })
+        }
     })
 
 export const animeRouter = createRouter()
@@ -54,7 +86,7 @@ export const animeRouter = createRouter()
                 where: {
                     AND: {
                         waitingForApproval: {
-                            not: !ctx.session?.user?.isAdmin,
+                            not: true,
                         },
                         OR: [
                             {

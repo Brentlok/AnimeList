@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { cropString } from "~/utils";
+import { cropString, fromExternalImg } from "~/utils";
 
 type Props = {
     data?: Array<{
@@ -35,7 +35,7 @@ export const AnimeList = (props: Props) => {
                 </h1>
                 <div className="relative w-full h-32 mt-4">
                     <Image
-                        src={anime.image}
+                        src={fromExternalImg(anime.image)}
                         alt={anime.title}
                         layout="fill"
                         objectFit="contain"

@@ -63,7 +63,7 @@ export const AnimeForm = (props: Props) => {
                 </div>
                 <Image
                     src={avatar}
-                    alt={''}
+                    alt=''
                     layout="fill"
                     objectFit="contain"
                 />

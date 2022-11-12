@@ -12,13 +12,22 @@ const Admin = () => {
         return <h1 className="text-3xl">You do not have access</h1>;
     }
 
-    const sectionsData = ['reviews', 'edits', 'anime',];
+    const sectionsData = ['reviews', 'edits', 'anime', 'add'] as const;
+
+    const handleClick = (item: typeof sectionsData[number]) => {
+        if (item === 'add') {
+            router.push('/add');
+            return;
+        }
+
+        router.push(`/admin/${item}`);
+    }
 
     const items = sectionsData.map(s => (
         <div
             key={s}
             className='anime anime-hover'
-            onClick={() => router.push(`/admin/${s}`)}
+            onClick={() => handleClick(s)}
         >
             <span className="px-6">
                 {upperFirst(s)}
