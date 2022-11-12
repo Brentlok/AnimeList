@@ -32,6 +32,7 @@ const Profile = () => {
                 <Input.File
                     setFile={setFile}
                     setDataUrl={setAvatar}
+                    placeholder="Upload avatar"
                 />
             </div>
         )
