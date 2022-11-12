@@ -3,7 +3,7 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { GoBack, If, Loading } from "~/bits";
 import { AddReview, Comments } from "~/components";
-import { trpc } from "~/utils";
+import { fromExternalImg, trpc } from "~/utils";
 
 const Anime = () => {
     const router = useRouter();
@@ -48,7 +48,7 @@ const Anime = () => {
                 <div className="flex flex-col gap-4 justify-center md:flex-row w-full mt-6 items-center">
                     <div className="relative w-96 h-96">
                         <Image
-                            src={data?.image ?? ''}
+                            src={fromExternalImg(data?.image)}
                             alt={data?.title}
                             layout="fill"
                             objectFit="contain"

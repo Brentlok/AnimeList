@@ -1,6 +1,29 @@
 import { z } from "zod";
 import { toUndef } from "../api_utils";
 import { createRouter } from "./context";
+import { createProtectedRouter } from "./protected-router";
+
+const protectedRouter = createProtectedRouter()
+    .mutation('add', {
+        input: z.object({
+            title: z.string(),
+            title_english: z.string(),
+            description: z.string(),
+            image: z.string(),
+        }),
+        async resolve({ ctx, input }) {
+            const res = await ctx.prisma.anime.create({
+                data: {
+                    title: input.title,
+                    title_english: input.title_english,
+                    description: input.description,
+                    image: input.image,
+                }
+            });
+
+            return res.id;
+        },
+    })
 
 export const animeRouter = createRouter()
     .query("byName", {
@@ -153,4 +176,4 @@ export const animeRouter = createRouter()
                 reviews: withUsers.filter(x => x.userId !== ctx.session?.user?.id),
             };
         }
-    });
+    }).merge(protectedRouter);

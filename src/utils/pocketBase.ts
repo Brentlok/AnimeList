@@ -7,7 +7,11 @@ class PocketBase {
         this.client = new Client(db_url);
     }
 
-    addFile = async (file: File | Blob, oldFile?: string | null) => {
+    addFile = async (file?: File | Blob, oldFile?: string | null) => {
+        if (!file) {
+            return '';
+        }
+
         if (oldFile && !/https:\/\//.test(oldFile)) {
             const oldFileId = oldFile.split('/').find(() => true) ?? '';
             this.client.records.delete('files', oldFileId);

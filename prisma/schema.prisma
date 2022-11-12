@@ -56,7 +56,7 @@ model VerificationToken {
 }
 
 model Anime {
-    id            Int      @id
+    id            Int      @id @default(autoincrement())
     title         String
     title_english String
     image         String   @db.VarChar(255)

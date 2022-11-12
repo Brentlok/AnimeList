@@ -5,21 +5,32 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod';
 import { Button, Input } from '~/bits';
 
+export type FormDataType = z.infer<typeof schema> & { file: File | undefined };
+
+type Props = {
+    onSubmit: (data: FormDataType) => void;
+    isLoading?: boolean;
+}
+
 const schema = z.object({
     title: z.string()
         .min(3, { message: 'Min. 3 characters' }),
     title_english: z.string(),
     description: z.string()
         .min(25, { message: 'Min. 25 characters' }),
-})
+});
 
-export const AnimeForm = () => {
+export const AnimeForm = (props: Props) => {
     const { register, handleSubmit, formState: { errors }, watch } = useForm({
         resolver: zodResolver(schema),
+        defaultValues: {
+            title: '',
+            title_english: '',
+            description: '',
+        }
     });
     const [file, setFile] = useState<File>();
     const [avatar, setAvatar] = useState('');
-    const onSubmit = (data: unknown) => console.log(data);
     const description = watch('description');
 
     useLayoutEffect(() => {
@@ -35,13 +46,15 @@ export const AnimeForm = () => {
 
     const img = avatar === ''
         ? (
-            <Input.File
-                setFile={setFile}
-                setDataUrl={setAvatar}
-                placeholder="Upload Image"
-            />
+            <div className='scale-150 my-4'>
+                <Input.File
+                    setFile={setFile}
+                    setDataUrl={setAvatar}
+                    placeholder="Upload Image"
+                />
+            </div>
         ) : (
-            <div className="relative w-full h-24">
+            <div className="relative w-full h-48">
                 <div
                     className="absolute -right-2 -top-2 cursor-pointer"
                     onClick={() => setAvatar('')}
@@ -59,7 +72,7 @@ export const AnimeForm = () => {
 
     return (
         <form
-            onSubmit={handleSubmit(onSubmit)}
+            onSubmit={handleSubmit(data => props.onSubmit({ ...data, file }))}
             className='flex flex-col gap-4 w-full max-w-md'
         >
             <div className='flex justify-center'>
@@ -91,7 +104,11 @@ export const AnimeForm = () => {
                 />
                 {errors.description && <p className='text-center text-red-500'>{errors.description.message?.toString()}</p>}
             </div>
-            <Button type='submit' buttonText='Submit' />
+            <Button
+                type='submit'
+                buttonText='Submit'
+                isLoading={Boolean(props.isLoading)}
+            />
         </form>
     );
 }
