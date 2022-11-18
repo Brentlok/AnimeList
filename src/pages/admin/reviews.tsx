@@ -1,19 +1,24 @@
 import { useState } from "react";
 import ReactPaginate from "react-paginate";
-import { GoBack, Loading } from "~/bits";
+import { GoBack, Loading, Updating } from "~/bits";
 import { Comments } from "~/components";
 import { confirmPrompt, trpc } from "~/utils";
 
 const Reviews = () => {
     const [page, setPage] = useState(0);
 
-    const { data, status, refetch } = trpc.useQuery(
+    const { data, status, refetch, isFetching } = trpc.useQuery(
         ['review.list', { paging: { page, count: 12 } }],
     );
 
     const remove = trpc.useMutation('review.remove');
+    const isLoading = remove.isLoading || isFetching;
 
     const handleRemove = async (reviewId: number) => {
+        if (isLoading) {
+            return;
+        }
+
         const res = confirmPrompt(() => null);
         if (!res) {
             return;
@@ -48,6 +53,7 @@ const Reviews = () => {
                 pageCount={data?.paging.maxPage ?? 0}
             />
 
+            <Updating isLoading={isLoading} />
             <GoBack />
         </>
     );

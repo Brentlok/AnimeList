@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Button, Loading } from "~/bits";
+import { Button, GoBack, Loading } from "~/bits";
 import { fromExternalImg, trpc } from "~/utils";
 
 const Anime = () => {
@@ -42,6 +42,8 @@ const Anime = () => {
         <>
             <h1 className="text-2xl">List of Anime waiting for Admin&apos;s approval</h1>
             {items}
+
+            <GoBack />
         </>
     )
 }

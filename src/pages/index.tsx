@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { Input } from "~/bits";
+import { Button, Input } from "~/bits";
 import { hook } from "~/utils";
 
 const Home = () => {
@@ -30,8 +30,14 @@ const Home = () => {
             <Input.Text
                 value={anime}
                 onChange={setAnime}
-                placeholder="Write Anime Name..."
+                placeholder="Search Anime..."
             />
+            <div className="fixed bottom-10">
+                <Button
+                    buttonAction={() => router.push('/add')}
+                    buttonText="Add anime"
+                />
+            </div>
         </>
     )
 };
