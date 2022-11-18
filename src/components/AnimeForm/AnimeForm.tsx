@@ -9,6 +9,7 @@ export type FormDataType = z.infer<typeof schema> & { file: File | undefined };
 
 type Props = {
     onSubmit: (data: FormDataType) => void;
+    anime?: z.infer<typeof schema> & { image?: string };
     isLoading?: boolean;
 }
 
@@ -24,13 +25,13 @@ export const AnimeForm = (props: Props) => {
     const { register, handleSubmit, formState: { errors }, watch } = useForm({
         resolver: zodResolver(schema),
         defaultValues: {
-            title: '',
-            title_english: '',
-            description: '',
+            title: props.anime?.title ?? '',
+            title_english: props.anime?.title_english ?? '',
+            description: props.anime?.description ?? '',
         }
     });
     const [file, setFile] = useState<File>();
-    const [avatar, setAvatar] = useState('');
+    const [avatar, setAvatar] = useState(props.anime?.image ?? '');
     const description = watch('description');
 
     useLayoutEffect(() => {

@@ -25,6 +25,27 @@ const protectedRouter = createProtectedRouter()
             return res.id;
         },
     })
+    .mutation('edit', {
+        input: z.object({
+            id: z.number(),
+            title: z.string(),
+            title_english: z.string(),
+            description: z.string(),
+            image: z.string().nullish(),
+        }),
+        async resolve({ ctx, input }) {
+            await ctx.prisma.edit.create({
+                data: {
+                    title: input.title,
+                    title_english: input.title_english,
+                    description: input.description,
+                    image: input.image ?? '',
+                    animeId: input.id,
+                    userId: ctx.session.user.id,
+                }
+            });
+        },
+    })
     .query('waitingForApproval', {
         async resolve({ ctx }) {
             if (!ctx.session.user.isAdmin) {

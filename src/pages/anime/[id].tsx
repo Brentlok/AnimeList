@@ -1,7 +1,7 @@
 import { signIn, useSession } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { GoBack, If, Loading } from "~/bits";
+import { Edit, GoBack, If, Loading } from "~/bits";
 import { AddReview, Comments } from "~/components";
 import { fromExternalImg, trpc } from "~/utils";
 
@@ -56,6 +56,7 @@ const Anime = () => {
                     </div>
                     <span className="w-full md:w-1/2 lg:max-w-xl tracking-wider p-5">{data?.description}</span>
                 </div>
+                <Edit onClick={() => router.push(`/edit/${id}`)} />
 
                 {addReview}
 
