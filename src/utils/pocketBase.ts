@@ -3,8 +3,17 @@ import Client from 'pocketbase';
 class PocketBase {
     private client: Client;
 
-    constructor(readonly db_url: string) {
+    constructor(private readonly db_url: string) {
         this.client = new Client(db_url);
+    }
+
+    removeFile = async (file?: string | null) => {
+        if (!file || /https:\/\//.test(file)) {
+            return;
+        }
+
+        const oldFileId = file.split('/').find(() => true) ?? '';
+        this.client.records.delete('files', oldFileId);
     }
 
     addFile = async (file?: File | Blob, oldFile?: string | null) => {
@@ -12,10 +21,7 @@ class PocketBase {
             return '';
         }
 
-        if (oldFile && !/https:\/\//.test(oldFile)) {
-            const oldFileId = oldFile.split('/').find(() => true) ?? '';
-            this.client.records.delete('files', oldFileId);
-        }
+        this.removeFile(oldFile);
 
         const form = new FormData();
         form.append('file', file);

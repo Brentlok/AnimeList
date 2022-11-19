@@ -26,7 +26,7 @@ const Edits = () => {
                     height={45}
                 />
             </div>
-            <div>{item.animeTitle}</div>
+            <div>{item.anime.title}</div>
             <div
                 className="cursor-pointer group"
                 onClick={() => router.push(`/admin/edits/${item.id}`)}

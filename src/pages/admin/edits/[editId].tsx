@@ -40,9 +40,20 @@ const EditDetails = () => {
     const id = Number(router.query.editId as string);
 
     const { data, isLoading } = trpc.useQuery(['edit.byId', { id }]);
+    const accept = trpc.useMutation(['edit.accept']);
 
     if (isLoading || !data) {
         return <Loading />;
+    }
+
+    const handleAccept = async () => {
+        const res = await accept.mutateAsync({ id });
+
+        if (!res) {
+            return;
+        }
+
+        router.push(`/anime/${res}`);
     }
 
     const { anime } = data;
@@ -76,6 +87,8 @@ const EditDetails = () => {
             <div className="fixed bottom-10">
                 <Button
                     buttonText="Accept Edit"
+                    buttonAction={handleAccept}
+                    isLoading={accept.isLoading}
                 />
             </div>
 
