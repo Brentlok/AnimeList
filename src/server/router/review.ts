@@ -60,39 +60,29 @@ export const reviewRouter = createProtectedRouter()
             }),
         }),
         async resolve({ ctx, input }) {
-            const reviewsBase = await ctx.prisma.review.findMany({
+            const reviews = await ctx.prisma.review.findMany({
                 take: input.paging.count,
                 skip: input.paging.count * input.paging.page,
-            });
-
-            const users = await ctx.prisma.user.findMany({
-                where: { id: { in: reviewsBase.map(x => x.userId) } },
                 select: {
                     id: true,
-                    image: true,
-                    name: true,
-                }
-            });
-
-            const animeTitles = await ctx.prisma.anime.findMany({
-                where: {
-                    id: { in: reviewsBase.map(x => x.animeId) }
-                },
-                select: {
-                    id: true,
-                    title: true,
+                    review: true,
+                    comment: true,
+                    user: {
+                        select: {
+                            image: true,
+                            name: true,
+                        }
+                    },
+                    anime: {
+                        select: {
+                            title: true,
+                        }
+                    }
                 }
             });
 
             const allRecordsCount = await ctx.prisma.review.count({});
             const maxPage = Math.ceil(allRecordsCount / input.paging.count);
-            const reviews = reviewsBase
-                .map(x => ({ ...x, user: users.find(user => user.id === x.userId) }))
-                .map(x => ({
-                    ...x,
-                    animeTitle: animeTitles
-                        .find(anime => anime.id === x.animeId)?.title ?? '',
-                }));
 
             return {
                 result: reviews,

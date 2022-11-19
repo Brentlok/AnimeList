@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { toUndef } from "../api_utils";
 import { createRouter } from "./context";
 import { createProtectedRouter } from "./protected-router";
 
@@ -191,48 +190,47 @@ export const animeRouter = createRouter()
             userId: z.string().nullish(),
         }),
         async resolve({ ctx, input }) {
-            const anime = await ctx.prisma.anime.findFirst({ where: { id: { equals: input.id } } });
-
-            const userReview = await ctx.prisma.review.findFirst({
-                where: {
-                    AND: {
-                        userId: { equals: input.userId ?? ctx.session?.user?.id },
-                        animeId: { equals: input.id },
-                    }
-                },
-                select: {
-                    id: true,
-                    userId: true,
-                    review: true,
-                    comment: true,
-                },
-            });
-
-            const reviews = await ctx.prisma.review.findMany({
-                where: { animeId: { equals: input.id, }, },
-            });
-
-            const users = await ctx.prisma.user.findMany({
-                where: { id: { in: reviews.map(x => x.userId) } },
+            const anime = await ctx.prisma.anime.findFirst({
+                where: { id: { equals: input.id } },
                 select: {
                     id: true,
                     image: true,
-                    name: true,
+                    title: true,
+                    title_english: true,
+                    description: true,
+                    Review: {
+                        select: {
+                            id: true,
+                            userId: true,
+                            review: true,
+                            comment: true,
+                        },
+                        include: {
+                            user: {
+                                select: {
+                                    id: true,
+                                    image: true,
+                                    name: true,
+                                }
+                            }
+                        }
+                    },
                 }
             });
-
-            const withUsers = reviews.map(x => ({ ...x, user: users.find(user => user.id === x.userId) }));
 
             const review = await ctx.prisma.review.aggregate({
                 where: { animeId: { equals: input.id, }, },
                 _avg: { review: true, },
             });
 
+            if (anime?.Review) {
+                anime.Review = anime.Review.filter(x => x.userId !== input.userId);
+            }
+
             return {
                 ...anime,
                 review: review._avg.review,
-                userReview: toUndef(userReview),
-                reviews: withUsers.filter(x => x.userId !== ctx.session?.user?.id),
+                userReview: anime?.Review.find(x => x.userId === input.userId),
             };
         }
     }).merge(protectedRouter);

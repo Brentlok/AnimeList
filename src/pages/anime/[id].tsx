@@ -61,7 +61,7 @@ const Anime = () => {
                 {addReview}
 
                 <Comments
-                    comments={data?.reviews}
+                    comments={data?.Review}
                 />
             </If>
 

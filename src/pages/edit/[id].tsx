@@ -47,7 +47,6 @@ const Edit = () => {
                 onSubmit={onSubmit}
                 isLoading={edit.isLoading}
             />
-
             {success}
             <GoBack />
         </>
