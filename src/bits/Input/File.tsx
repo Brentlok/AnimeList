@@ -4,6 +4,7 @@ type Props = {
     setDataUrl: Dispatch<SetStateAction<string>>;
     setFile: Dispatch<SetStateAction<File | undefined>>;
     accept?: string;
+    placeholder: string;
 }
 
 export const File = (props: Props) => {
@@ -28,7 +29,7 @@ export const File = (props: Props) => {
                 htmlFor="upload"
                 className="w-24 h-24 border-red-500 border-2 cursor-pointer rounded-full grid place-items-center text-center"
             >
-                Upload avatar
+                {props.placeholder}
             </label>
             <input
                 type="file"

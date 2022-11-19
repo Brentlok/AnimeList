@@ -1,6 +1,82 @@
 import { z } from "zod";
-import { toUndef } from "../api_utils";
 import { createRouter } from "./context";
+import { createProtectedRouter } from "./protected-router";
+
+const protectedRouter = createProtectedRouter()
+    .mutation('add', {
+        input: z.object({
+            title: z.string(),
+            title_english: z.string(),
+            description: z.string(),
+            image: z.string(),
+        }),
+        async resolve({ ctx, input }) {
+            const res = await ctx.prisma.anime.create({
+                data: {
+                    title: input.title,
+                    title_english: input.title_english,
+                    description: input.description,
+                    image: input.image,
+                    waitingForApproval: !ctx.session.user.isAdmin,
+                }
+            });
+
+            return res.id;
+        },
+    })
+    .mutation('edit', {
+        input: z.object({
+            id: z.number(),
+            title: z.string(),
+            title_english: z.string(),
+            description: z.string(),
+            image: z.string().nullish(),
+        }),
+        async resolve({ ctx, input }) {
+            await ctx.prisma.edit.create({
+                data: {
+                    title: input.title,
+                    title_english: input.title_english,
+                    description: input.description,
+                    image: input.image ?? '',
+                    animeId: input.id,
+                    userId: ctx.session.user.id,
+                }
+            });
+        },
+    })
+    .query('waitingForApproval', {
+        async resolve({ ctx }) {
+            if (!ctx.session.user.isAdmin) {
+                return [];
+            }
+
+            return await ctx.prisma.anime.findMany({
+                where: {
+                    waitingForApproval: {
+                        equals: true,
+                    }
+                }
+            })
+        }
+    })
+    .mutation('accept', {
+        input: z.number(),
+        async resolve({ ctx, input }) {
+            if (!ctx.session.user.isAdmin) {
+                return;
+            }
+
+            await ctx.prisma.anime.update({
+                data: {
+                    waitingForApproval: false,
+                },
+                where: {
+                    id: input,
+                }
+            })
+        }
+    })
 
 export const animeRouter = createRouter()
     .query("byName", {
@@ -28,18 +104,23 @@ export const animeRouter = createRouter()
 
             const list = await ctx.prisma.anime.findMany({
                 where: {
-                    OR: [
-                        {
-                            title: {
-                                contains: input.anime,
-                            },
+                    AND: {
+                        waitingForApproval: {
+                            not: true,
                         },
-                        {
-                            title_english: {
-                                contains: input.anime,
+                        OR: [
+                            {
+                                title: {
+                                    contains: input.anime,
+                                },
                             },
-                        },
-                    ],
+                            {
+                                title_english: {
+                                    contains: input.anime,
+                                },
+                            },
+                        ],
+                    }
                 },
                 skip: recordsToSkip,
                 take: count,
@@ -109,48 +190,47 @@ export const animeRouter = createRouter()
             userId: z.string().nullish(),
         }),
         async resolve({ ctx, input }) {
-            const anime = await ctx.prisma.anime.findFirst({ where: { id: { equals: input.id } } });
-
-            const userReview = await ctx.prisma.review.findFirst({
-                where: {
-                    AND: {
-                        userId: { equals: input.userId ?? ctx.session?.user?.id },
-                        animeId: { equals: input.id },
-                    }
-                },
-                select: {
-                    id: true,
-                    userId: true,
-                    review: true,
-                    comment: true,
-                },
-            });
-
-            const reviews = await ctx.prisma.review.findMany({
-                where: { animeId: { equals: input.id, }, },
-            });
-
-            const users = await ctx.prisma.user.findMany({
-                where: { id: { in: reviews.map(x => x.userId) } },
+            const anime = await ctx.prisma.anime.findFirst({
+                where: { id: { equals: input.id } },
                 select: {
                     id: true,
                     image: true,
-                    name: true,
+                    title: true,
+                    title_english: true,
+                    description: true,
+                    Review: {
+                        select: {
+                            id: true,
+                            userId: true,
+                            review: true,
+                            comment: true,
+                        },
+                        include: {
+                            user: {
+                                select: {
+                                    id: true,
+                                    image: true,
+                                    name: true,
+                                }
+                            }
+                        }
+                    },
                 }
             });
-
-            const withUsers = reviews.map(x => ({ ...x, user: users.find(user => user.id === x.userId) }));
 
             const review = await ctx.prisma.review.aggregate({
                 where: { animeId: { equals: input.id, }, },
                 _avg: { review: true, },
             });
 
+            if (anime?.Review) {
+                anime.Review = anime.Review.filter(x => x.userId !== input.userId);
+            }
+
             return {
                 ...anime,
                 review: review._avg.review,
-                userReview: toUndef(userReview),
-                reviews: withUsers.filter(x => x.userId !== ctx.session?.user?.id),
+                userReview: anime?.Review.find(x => x.userId === input.userId),
             };
         }
-    });
+    }).merge(protectedRouter);

@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 type Props = {
-    buttonAction: () => void;
+    buttonAction?: () => void;
     buttonText: string;
     isLoading?: boolean;
     type?: 'submit' | 'button';

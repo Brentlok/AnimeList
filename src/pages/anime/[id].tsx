@@ -1,9 +1,9 @@
 import { signIn, useSession } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { GoBack, If, Loading } from "~/bits";
+import { Edit, GoBack, If, Loading } from "~/bits";
 import { AddReview, Comments } from "~/components";
-import { trpc } from "~/utils";
+import { fromExternalImg, trpc } from "~/utils";
 
 const Anime = () => {
     const router = useRouter();
@@ -48,7 +48,7 @@ const Anime = () => {
                 <div className="flex flex-col gap-4 justify-center md:flex-row w-full mt-6 items-center">
                     <div className="relative w-96 h-96">
                         <Image
-                            src={data?.image ?? ''}
+                            src={fromExternalImg(data?.image)}
                             alt={data?.title}
                             layout="fill"
                             objectFit="contain"
@@ -56,11 +56,12 @@ const Anime = () => {
                     </div>
                     <span className="w-full md:w-1/2 lg:max-w-xl tracking-wider p-5">{data?.description}</span>
                 </div>
+                <Edit onClick={() => router.push(`/edit/${id}`)} />
 
                 {addReview}
 
                 <Comments
-                    comments={data?.reviews}
+                    comments={data?.Review}
                 />
             </If>
 
