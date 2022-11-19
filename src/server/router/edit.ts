@@ -1,3 +1,4 @@
+import { z } from "zod";
 import { createProtectedRouter } from "./protected-router";
 
 export const editRouter = createProtectedRouter()
@@ -42,4 +43,22 @@ export const editRouter = createProtectedRouter()
                 result: reviews,
             }
         },
+    })
+    .query("byId", {
+        input: z.object({
+            id: z.number(),
+        }),
+        async resolve({ input, ctx }) {
+            return await ctx.prisma.edit.findFirst({
+                where: { id: { equals: input.id } },
+                select: {
+                    title: true,
+                    title_english: true,
+                    description: true,
+                    image: true,
+                    anime: true,
+                    user: true,
+                }
+            })
+        }
     })
