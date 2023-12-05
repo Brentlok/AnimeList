@@ -2,7 +2,7 @@
 
 Side project created in [NextJS](https://nextjs.org/) with [tRPC](https://trpc.io/)
 
-[Check it out here](anime.hbieszczad.pl)
+[Check it out here](https://anime.hbieszczad.pl)
 
 More detailed stack:
 - NextJS
